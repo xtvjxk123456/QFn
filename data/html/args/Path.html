@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Path</title>
+</head>
+
+<style>
+#title{text-align:center;}
+h2,h3,pre{font-family: "楷体","楷体_GB2312","Microsoft YaHei",微软雅黑;}
+h1,h4{"Microsoft YaHei",微软雅黑;}
+h2{font-size: 32px;}
+h3{font-size: 24px;}
+h4,pre{font-size: 18px;}
+a{text-decoration:none}
+</style>
+
+<body>
+
+<h1 id="title"><a href="../../../index.html">QFn</a>.<a href="args.html">args</a>.Path</h1>
+
+<h3>父类：</h3>
+<ul>
+	<li>PySide.QtGui.QWidget</li>
+</ul>
+
+<h3>方法：</h3>
+<ul>
+	<li><a href="#__init__">__init__</a>(self str ext = "")</li>
+    <li>str <a href="#__repr__">__repr__</a>(self)</li>
+</ul>
+
+<h3>属性：</h3>
+<ul>
+    <li>str <a href="#ext">ext</a></li>
+	<li>str <a href="#arg">arg</a></li>
+</ul>
+
+<h3>信号：</h3>
+<ul>
+	<li>void <a href="#argChanged">argChanged</a> (str)</li>
+</ul>
+<br>
+
+
+<h2>文档</h2>
+<hr>
+
+<div id="__init__"><h4>__init__(self str ext = "")</h4></div>
+<pre>
+    参数 ext: 文件扩展名。
+    点击open按钮可打开QFileDialog组件来选择文件。
+    空字符串:   QFileDialog可查看选择文件夹;
+    *：         QFileDialog可查看选择任意扩展名的文件;
+    str:        QFileDialog可查看选择指定扩展名的文件;
+    list[str,]：QFileDialog可查看选择列表内所有扩展名的文件;
+
+</pre>
+<br>
+
+<div id="__repr__"><h4>str __repr__(self)</h4></div>
+<pre>
+    返回 Path(ext)。
+</pre>
+<br>
+
+<div id="ext"><h4>str ext</h4></div>
+<pre>
+    文件扩展名。
+</pre>
+<br>
+
+<div id="arg"><h4>str arg</h4></div>
+<pre>
+    str arg = Path.arg: 查询文件选择框文本。
+    Path.arg = str arg: 设置文件选择框文本。
+</pre>
+<br>
+
+<div id="argChanged"><h4>void argChanged(str)</h4></div>
+<pre>
+    当文件选择框文本改变时，发射文件选择框文本。
+</pre>
+<br>
+
+<h2>案例</h2>
+<hr>
+
+<pre style="margin-left:36px;">
+import QFn.args
+
+
+def show_arg(arg):
+    print "arg changed:", arg
+
+widget = QFn.args.Path()
+widget.show()
+
+print widget
+# Result: Path()
+
+new_widget = eval(repr(widget), QFn.args.__dict__)
+new_widget.show()
+
+new_widget.argChanged.connect(show_arg)
+
+new_widget.arg = "C:/Users/Admin/Documents"
+print new_widget.arg
+new_widget.arg = 0
+# Warning: Path().arg must be str
+
+</pre>
+</body>
+</html>

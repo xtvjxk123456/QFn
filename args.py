@@ -47,20 +47,20 @@ class Bool(QtGui.QCheckBox):
 class BoolArray(QtGui.QWidget):
     argChanged = QtCore.Signal(list)
 
-    def __init__(self, *labels):
+    def __init__(self, *texts):
         u"""
-        :param labels: 每勾选框标签<tuple(str,str……)>
+        :param texts: 每勾选框文本<tuple(str,str……)>
         """
         QtGui.QWidget.__init__(self)
-        self.labels = list(labels)
+        self.texts = list(texts)
         self.setLayout(QtGui.QHBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
         def emit_args():
             self.argChanged.emit(self.arg)
 
-        for index, label in enumerate(self.labels):
-            self.layout().addWidget(QtGui.QCheckBox(label))
+        for index, text in enumerate(self.texts):
+            self.layout().addWidget(QtGui.QCheckBox(text))
             self.layout().itemAt(index).widget().toggled.connect(emit_args)
 
     @property
@@ -79,7 +79,7 @@ class BoolArray(QtGui.QWidget):
         sys.stderr.write(warnings)
 
     def __repr__(self):
-        return "{self.__class__.__name__}({labels})".format(self=self, labels=repr(self.labels)[1:-1])
+        return "{self.__class__.__name__}({labels})".format(self=self, labels=repr(self.texts)[1:-1])
 
 
 class Int(QtGui.QSpinBox):
@@ -151,7 +151,7 @@ class IntArray(QtGui.QWidget):
                 for index in range(self.layout().count() / 2):
                     self.layout().itemAt(index * 2 + 1).widget().arg = value[index]
                 return
-        warnings = "{self}.arg must be {length} bool int".format(self=self, length=self.layout().count()/2)
+        warnings = "{self}.arg must be {length} int".format(self=self, length=self.layout().count()/2)
         sys.stderr.write(warnings)
 
     def __repr__(self):
@@ -231,7 +231,7 @@ class FloatArray(QtGui.QWidget):
                 for index in range(self.layout().count() / 2):
                     self.layout().itemAt(index * 2 + 1).widget().arg = value[index]
                 return
-        warnings = "{self}.arg must be {length} bool float".format(self=self, length=self.layout().count()/2)
+        warnings = "{self}.arg must be {length} float".format(self=self, length=self.layout().count()/2)
         sys.stderr.write(warnings)
 
     def __repr__(self):
@@ -263,11 +263,11 @@ class String(QtGui.QLineEdit):
 
 
 class Enum(QtGui.QComboBox):
-    def __init__(self, *labels):
+    def __init__(self, *texts):
         QtGui.QComboBox.__init__(self)
-        self.labels = labels
-        for label in labels:
-            self.addItem(label)
+        self.texts = texts
+        for text in texts:
+            self.addItem(text)
         self.argChanged = self.currentIndexChanged[str]
 
     def paintEvent(self, event):
@@ -280,20 +280,20 @@ class Enum(QtGui.QComboBox):
 
     @arg.setter
     def arg(self, value):
-        if value in self.labels:
+        if value in self.texts:
             self.setCurrentIndex(self.findText(value))
         else:
-            sys.stderr.write("{self}.arg must be in {self.labels}".format(self=self))
+            sys.stderr.write("{self}.arg must be in {self.texts}".format(self=self))
 
     def __repr__(self):
-        return "{self.__class__.__name__}({labels})".format(self=self, labels=repr(self.labels)[1:-1])
+        return "{self.__class__.__name__}({texts})".format(self=self, texts=repr(self.texts)[1:-1])
 
 
 class Path(QtGui.QWidget):
-    def __init__(self, ext=None):
+    def __init__(self, ext=""):
         u"""
         :param ext: 文件扩展名
-        None:只打开文件夹
+        空字符串:只打开文件夹
         *：打开任意扩展名的文件
         str: 打开指定扩展名的文件
         list[str, str……]：打开列表内所有扩展名的文件
@@ -326,13 +326,13 @@ class Path(QtGui.QWidget):
 
     @arg.setter
     def arg(self, value):
-        if isinstance(value, basestring):
+        if isinstance(value, (str, unicode)):
             self.layout().itemAt(0).widget().setText(value)
         else:
             sys.stderr.write("{self}.arg must be str".format(self=self))
 
     def __repr__(self):
-        if self.ext is None:
+        if not self.ext:
             return "{self.__class__.__name__}()".format(self=self)
         elif isinstance(self.ext, list):
             return "{self.__class__.__name__}({self.ext})".format(self=self)
@@ -350,8 +350,6 @@ class PathArray(QtGui.QListWidget):
         """
         QtGui.QListWidget.__init__(self)
         self.pattern = re.compile(pattern)
-        if not pattern == "":
-            self.args = [pattern]
         self.setAcceptDrops(True)
         self.paths = []
         self.menu = QtGui.QMenu(self)
@@ -404,9 +402,12 @@ class PathArray(QtGui.QListWidget):
         if hasattr(value, "__iter__"):
             for path in value:
                 if isinstance(path, (str, unicode)):
+
                     if path not in self.paths:
                         self.paths.append(path)
                         self.addItem(path)
+                        print path
+                        print "path"
             self.argChanged.emit(self.arg)
         else:
             sys.stderr.write("{self}.arg must be [str,str……]".format(self=self))

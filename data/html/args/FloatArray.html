@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>IntArray</title>
+    <title>FloatArray</title>
 </head>
 
 <style>
@@ -17,7 +17,9 @@ a{text-decoration:none}
 
 <body>
 
-<h1 id="title"><a href="../../../index.html">QFn</a>.<a href="args.html">args</a>.IntArray</h1>
+<br>
+
+<h1 id="title"><a href="../../../index.html">QFn</a>.<a href="args.html">args</a>.FloatArray</h1>
 
 <h3>父类：</h3>
 <ul>
@@ -51,13 +53,13 @@ a{text-decoration:none}
     参数 labels: 每勾选框标签(str,str……)
     参数 min_value: 组件可输入最小值，该值不小于-2147483648。
     参数 max_value: 组件可输入最大值，该值不大于2147483647。
-    依次为labels中每个标签创建相应<a href="Int.html">Int</a>并横向排列。
+    依次为labels中每个标签创建相应<a href="Float.html">Float</a>并横向排列。
 </pre>
 <br>
 
 <div id="__repr__"><h4>str __repr__(self)</h4></div>
 <pre>
-    返回 IntArray(labels, min_value， max_value)。
+    返回 FloatArray(labels, min_value， max_value)。
 </pre>
 <br>
 
@@ -65,20 +67,20 @@ a{text-decoration:none}
 
 <div id="labels"><h4>list labels</h4></div>
 <pre>
-    每整数输入框标签list[str, str……]
+    每浮点数输入框标签list[str, str……]
 </pre>
 <br>
 
 <div id="arg"><h4>list arg</h4></div>
 <pre>
-    [int, int……] IntArray.arg: 查询每整数输入框输入数值。
-    IntArray.arg = [int, int……]: 设置每整数输入框输入数值。
+    list[float, float……] arg = FloatArray.arg: 查询每浮点数输入框输入数值。
+    FloatArray.arg = list[float, float……] arg: 设置每浮点数输入框输入数值。
 </pre>
 <br>
 
 <div id="argChanged"><h4>void argChanged(list)</h4></div>
 <pre>
-    每当整数输入框数值改变时，发射每整数输入框数值。
+    每当浮点数输入框数值改变时，发射每浮点数输入框输入框数值。
 </pre>
 <br>
 
@@ -92,21 +94,22 @@ import QFn.args
 def show_arg(arg):
     print "arg changed:", arg
 
-widget = QFn.args.IntArray(["x", "y", "z"])
+widget = QFn.args.FloatArray(["x", "y", "z"])
 widget.show()
 
 print widget
-# Result: IntArray(['x', 'y', 'z'])
+# Result: FloatArray(['x', 'y', 'z'])
 
 new_widget = eval(repr(widget), QFn.args.__dict__)
 new_widget.show()
 
 new_widget.argChanged.connect(show_arg)
 
-new_widget.arg = [1, 1, 1]
+new_widget.arg = [1.0, 1.0, 1.0]
 print new_widget.arg
 new_widget.arg = "10000"
-# Warning: IntArray(['x', 'y', 'z']).arg must be 3 int
-</pre >
+# Warning: FloatArray(['x', 'y', 'z']).arg must be 3 float
+</pre>
+
 </body>
 </html>

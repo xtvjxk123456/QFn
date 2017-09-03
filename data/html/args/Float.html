@@ -6,23 +6,18 @@
 </head>
 
 <style>
-#title{
-    text-align:center
-}
-h3{
-    font-style:oblique
-}
-a{
-    text-decoration:none
-}
-pre{
-    font-size: 18px
-}
+#title{text-align:center;}
+h2,h3,pre{font-family: "楷体","楷体_GB2312","Microsoft YaHei",微软雅黑;}
+h1,h4{"Microsoft YaHei",微软雅黑;}
+h2{font-size: 32px;}
+h3{font-size: 24px;}
+h4,pre{font-size: 18px;}
+a{text-decoration:none}
 </style>
 
-<br>
+<body>
 
-<h1 id="title"><a href="../QFn.html">QFn</a>.<a href="args.html">args</a>.Float</h1>
+<h1 id="title"><a href="../../../index.html">QFn</a>.<a href="args.html">args</a>.Float</h1>
 
 <h3>父类：</h3>
 <ul>
@@ -38,7 +33,7 @@ pre{
 
 <h3>属性：</h3>
 <ul>
-	<li><a href="#arg">arg</a></li>
+	<li>float <a href="#arg">arg</a></li>
 </ul>
 
 <h3>信号：</h3>
@@ -48,7 +43,8 @@ pre{
 <br>
 
 
-<h2>文档<hr></h2>
+<h2>文档</h2>
+<hr>
 
 <div id="__init__"><h4>__init__(self, int min_value=-2147483648, int max_value=2147483647)</h4></div>
 <pre>
@@ -58,16 +54,16 @@ pre{
 </pre>
 <br>
 
+<div id="__repr__"><h4>str __repr__(self)</h4></div>
+<pre>
+    返回 Float(min_value， max_value)。
+</pre>
+<br>
+
 <div id="paintEvent"><h4>paintEvent(self, paintEvent event)</h4></div>
 <pre>
     浮点数输入框默认为四位数宽度。
     当输入数值大于四位数时，宽度为输入数值所占宽度。
-</pre>
-<br>
-
-<div id="__repr__"><h4>str __repr__(self)</h4></div>
-<pre>
-    返回 Float(min_value， max_value)。
 </pre>
 <br>
 
@@ -84,8 +80,10 @@ pre{
 </pre>
 <br>
 
-<h2>案例<hr></h2>
-<dd><pre>
+<h2>案例</h2>
+<hr>
+
+<pre style="margin-left:36px;">
 import QFn.args
 
 
@@ -107,6 +105,6 @@ new_widget.arg = 100000.0
 print new_widget.arg
 new_widget.arg = "10000"
 # Warning: Float().arg must be float
-</pre></dd>
+</pre>
 </body>
 </html>
