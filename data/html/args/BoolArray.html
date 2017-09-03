@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BoolArray</title>
+</head>
+
+<style>
+#title{
+    text-align:center
+}
+h3{
+    font-style:oblique
+}
+a{
+    text-decoration:none
+}
+pre{
+    font-size: 18px
+}
+</style>
+
+<br>
+
+<h1 id="title"><a href="../QFn.html">QFn</a>.<a href="args.html">args</a>.BoolArray</h1>
+
+<h3>父类：</h3>
+<ul>
+	<li>PySide.QtGui.QWidget</li>
+</ul>
+
+<h3>方法：</h3>
+<ul>
+	<li><a href="#__init__">__init__</a>(self, str *labels)</li>
+    <li>str <a href="#__repr__">__repr__</a>(self)</li>
+</ul>
+
+<h3>属性：</h3>
+<ul>
+	<li><a href="#arg">arg</a></li>
+	<li><a href="#labels">labels</a></li>
+</ul>
+
+<h3>信号：</h3>
+<ul>
+	<li>void <a href="#argChanged">argChanged</a> (list)</li>
+</ul>
+<br>
+
+
+<h2>文档<hr></h2>
+
+<div id="__init__"><h4>__init__(self, str *labels)</h4></div>
+<pre>
+    参数 labels: 每勾选框标签(str,str……)
+    依次为labels中每个标签创建相应QCheckBox并横向排列；
+</pre>
+<br>
+
+<div id="__repr__"><h4>str __repr__(self)</h4></div>
+<pre>
+    返回 BoolArray(*labels)。
+</pre>
+<br>
+
+<div id="arg"><h4>arg</h4></div>
+<pre>
+    list[bool, bool……] BoolArray.arg: 查询每勾选框是否勾选。
+    BoolArray.arg = list[bool, bool……]: 设置每勾选框的勾选状态。
+</pre>
+<br>
+
+<div id="labels"><h4>labels</h4></div>
+<pre>
+    每勾选框标签list[str, str……]
+</pre>
+<br>
+
+<div id="argChanged"><h4>void argChanged(list)</h4></div>
+<pre>
+    当勾选框勾选状态改变时，发射每勾选框勾选状态。
+</pre>
+<br>
+
+<h2>案例<hr></h2>
+<dd><pre>
+import QFn.args
+
+
+def show_arg(arg):
+    print "arg changed:", arg
+
+widget = QFn.args.BoolArray("bool1", "bool2")
+widget.show()
+
+print widget
+# Result: BoolArray('bool1', 'bool2')
+
+new_widget = eval(repr(widget), QFn.args.__dict__)
+new_widget.show()
+
+new_widget.argChanged.connect(show_arg)
+
+new_widget.arg = [True, False]
+print new_widget.arg
+new_widget.arg = 1
+# Warning: BoolArray('bool1', 'bool2').arg must be 2 bool list
+</pre></dd>
+</body>
+</html>

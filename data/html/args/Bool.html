@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bool</title>
+</head>
+
+<style>
+#title{
+    text-align:center
+}
+h3{
+    font-style:oblique
+}
+a{
+    text-decoration:none
+}
+pre{
+    font-size: 18px
+}
+</style>
+
+<br>
+
+<h1 id="title"><a href="../QFn.html">QFn</a>.<a href="args.html">args</a>.Bool</h1>
+
+<h3>父类：</h3>
+<ul>
+	<li>PySide.QtGui.QCheckBox</li>
+</ul>
+
+<h3>方法：</h3>
+<ul>
+	<li><a href="#__init__">__init__</a>(self)</li>
+    <li>str <a href="#__repr__">__repr__</a>(self)</li>
+</ul>
+
+<h3>属性：</h3>
+<ul>
+	<li><a href="#arg">arg</a></li>
+</ul>
+
+<h3>信号：</h3>
+<ul>
+	<li>void <a href="#argChanged">argChanged</a> (bool)</li>
+</ul>
+<br>
+
+
+<h2>文档<hr></h2>
+
+<div id="__init__"><h4>__init__(self)</h4></div>
+<pre>
+    令argChanged = toggled。
+</pre>
+<br>
+
+<div id="__repr__"><h4>str __repr__(self)</h4></div>
+<pre>
+    返回 Bool()。
+</pre>
+<br>
+
+<div id="arg"><h4>arg</h4></div>
+<pre>
+    bool Bool.arg: 查询勾选框是否勾选。
+    Bool.arg = bool: 设置勾选框的勾选状态。
+</pre>
+<br>
+
+<div id="argChanged"><h4>void argChanged(bool)</h4></div>
+<pre>
+    当组件勾选状态改变时，发射组件勾选状态。
+</pre>
+<br>
+
+<h2>案例<hr></h2>
+<dd><pre>
+import QFn.args
+def show_arg(arg):
+    print "arg changed:", arg
+
+widget = QFn.args.Bool()
+widget.show()
+
+print widget
+# Result: Bool()
+
+new_widget = eval(repr(widget), QFn.args.__dict__)
+new_widget.show()
+
+new_widget.argChanged.connect(show_arg)
+
+new_widget.arg = True
+print new_widget.arg
+new_widget.arg = 1
+# Warning: Bool().arg must be bool
+</pre></dd>
+</body>
+</html>
