@@ -1,4 +1,4 @@
-#coding:utf-8
+# coding:utf-8
 import os
 import sys
 import time
@@ -9,31 +9,50 @@ import inspect
 
 
 class Log(object):
+    u"""
+    用来记录代码日志。
+    """
     def __init__(self, path):
+        u"""
+        :param path: 日志路径。
+        """
         self.path = path
 
-    def __call__(self, *args):
-        for arg in args:
-            print arg
-        lines = [line + '\r\n' for line in args]
+    def __call__(self, *texts):
+        u"""
+        :param texts: 日志文本 <str>。
+        记录日志文本到日志路径。
+        """
+        for text in texts:
+            print text
+        texts = [text + '\r\n' for text in texts]
         if not os.path.isfile(self.path):
             if not os.path.isdir(os.path.dirname(self.path)):
                 os.makedirs(os.path.dirname(self.path))
         else:
             with open(self.path, 'r') as log:
-                lines.extend(log.readlines()[:1000])
+                texts.extend(log.readlines()[:1000])
         with open(self.path, 'w') as log:
-            log.writelines(lines)
+            log.writelines(texts)
 
     @property
     def time(self):
+        u"""
+        :return: 当前时间。
+        """
         return time.strftime('%Y/%m/%d %H:%M')
 
     @property
     def error(self):
+        u"""
+        :return: 当前错误信息。
+        """
         return traceback.format_exc().replace('\n', '\r\n')
 
     def open(self):
+        u"""
+        :return: 打开日志。
+        """
         if os.path.isfile(self.path):
             os.startfile(self.path)
 
@@ -42,33 +61,57 @@ class Log(object):
 
 
 class Json(object):
+    u"""
+    用来读/写json文件。
+    """
     def __init__(self, path):
+        u"""
+        :param path: json文件路径。
+        """
         self.path = path
-        self.data = None
+        self.__data = None
 
     def __nonzero__(self):
         return os.path.isfile(self.path)
 
     def read(self):
-        if self.data is None:
+        u"""
+        :return: json文件记录的数据
+        """
+        if self.__data is None:
             return self.reload()
         else:
-            return self.data
+            return self.__data
 
     def write(self, data):
+        u"""
+        将python数据写入json文件；
+        :param data: python数据；
+        """
         if not os.path.isfile(self.path):
             json_dir = os.path.dirname(self.path)
             if not os.path.isdir(json_dir):
                 os.makedirs(json_dir)
-        self.data = data
+        self.__data = data
         with open(self.path, 'w') as write:
             write.write(json.dumps(data))
 
     def reload(self):
+        u"""
+        当json文件以write函数之外的方式发生改变时，用reload来更新数据数据
+        :return: json文件记录的数据
+        """
         if os.path.isfile(self.path):
             with open(self.path, 'r') as read:
-                self.data = json.loads(read.read())
-                return self.data
+                self.__data = json.loads(read.read())
+                return self.__data
+
+    def delete(self):
+        u"""
+        删除json文件
+        """
+        if os.path.isfile(self.path):
+            os.remove(self.path)
 
     def __repr__(self):
         return "{self.__module__}.{self.__class__.__name__}('{self.path}')".format(self=self)
