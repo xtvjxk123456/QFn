@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Json</title>
+</head>
+
+<style type="text/css">
+    @import"../class.css";
+</style>
+
+<body>
+
+<h1 id="title"><a href="../../../index.html">QFn</a>.<a href="function.html">function</a>.Json</h1>
+
+<h3>父类：</h3>
+<ul>
+	<li>object</li>
+</ul>
+<br>
+
+<h3>属性：</h3>
+<ul>
+	<li>str <a href="#path">path</a></li>
+</ul>
+<br>
+
+<h3>方法：</h3>
+<ul>
+	<li><a href="#__init__">__init__</a>(self, str path)</li>
+    <li>str <a href="#__repr__">__repr__</a>(self)</li>
+    <li>bool <a href="#__nonzero__">__nonzero__</a>(self)</li>
+    <li>str <a href="#read">read</a>(self)</li>
+    <li>str <a href="#reload">reload</a>(self)</li>
+    <li><a href="#write">write</a>(self, object data)</li>
+    <li><a href="#delete">delete</a>(self)</li>
+</ul>
+<br>
+
+<h2>文档</h2>
+<hr>
+
+<div id="path"><h4>str path</h4></div>
+<pre>
+    json文件路径。
+</pre>
+<br>
+
+<div id="__init__"><h4>bool __init__(self, str path)</h4></div>
+<pre>
+    参数 path：json文件路径。
+</pre>
+<br>
+
+<div id="__repr__"><h4>bool __repr__(self)</h4></div>
+<pre>
+    返回：QFn.function.Json(path)
+</pre>
+<br>
+
+<div id="__nonzero__"><h4>bool __nonzero__(self)</h4></div>
+<pre>
+    返回：json文件是否存在。
+</pre>
+<br>
+
+<div id="read"><h4>str read(self)</h4></div>
+<pre>
+    返回：json文件记录的数据。
+</pre>
+<br>
+
+<div id="reload"><h4>str reload(self)</h4></div>
+<pre>
+    当json文件以write函数之外的方式发生改变时，用reload来更新数据。
+    返回: json文件记录的Python数据。
+</pre>
+<br>
+
+<div id="write"><h4>write(self, object data)</h4></div>
+<pre>
+    参数 data: python数据。
+    将python数据写入json文件。
+</pre>
+<br>
+
+<div id="delete"><h4>delete(self)</h4></div>
+<pre>
+    删除json文件。
+</pre>
+<br>
+
+<h2>案例</h2>
+<hr>
+
+<pre style="margin-left:36px;">
+# coding:utf-8
+import QFn.function
+
+json = QFn.function.Json("D:/QFn/test.json")
+
+print json
+print json.path
+if json:
+    print json.read()
+    json.delete()
+else:
+    print "不存在的！"
+    json.write("233")
+
+</pre>
+</body>
+</html>
