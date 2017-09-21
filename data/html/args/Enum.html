@@ -17,6 +17,14 @@
 <ul>
 	<li>PySide.QtGui.QComboBox</li>
 </ul>
+<br>
+
+<h3>属性：</h3>
+<ul>
+    <li>list <a href="#texts">texts</a></li>
+	<li>str <a href="#arg">arg</a></li>
+</ul>
+<br>
 
 <h3>方法：</h3>
 <ul>
@@ -24,12 +32,7 @@
     <li>str <a href="#__repr__">__repr__</a>(self)</li>
     <li><a href="#paintEvent">paintEvent</a>(self, QPaintEvent event)</li>
 </ul>
-
-<h3>属性：</h3>
-<ul>
-    <li>list <a href="#texts">texts</a></li>
-	<li>str <a href="#arg">arg</a></li>
-</ul>
+<br>
 
 <h3>信号：</h3>
 <ul>
@@ -40,6 +43,19 @@
 
 <h2>文档</h2>
 <hr>
+
+<div id="texts"><h4>list texts</h4></div>
+<pre>
+    每勾选框文本list[str, str……]
+</pre>
+<br>
+
+<div id="arg"><h4>str arg</h4></div>
+<pre>
+    str arg = Enum.arg: 查询下拉菜单所选项文本。
+    Enum.arg = str arg: 设置下拉菜单所选项文本。
+</pre>
+<br>
 
 <div id="__init__"><h4>__init__(self, *texts)</h4></div>
 <pre>
@@ -58,19 +74,6 @@
 <div id="paintEvent"><h4>paintEvent(self, paintEvent event)</h4></div>
 <pre>
     宽度实时更新为下拉菜单所选项文本所占宽度。
-</pre>
-<br>
-
-<div id="texts"><h4>list texts</h4></div>
-<pre>
-    每勾选框文本list[str, str……]
-</pre>
-<br>
-
-<div id="arg"><h4>str arg</h4></div>
-<pre>
-    str arg = Enum.arg: 查询下拉菜单所选项文本。
-    Enum.arg = str arg: 设置下拉菜单所选项文本。
 </pre>
 <br>
 

@@ -17,6 +17,16 @@
 <ul>
 	<li>PySide.QtGui.QListWidget</li>
 </ul>
+<br>
+
+<h3>属性：</h3>
+<ul>
+    <li>_sre.SRE_Pattern <a href="#pattern">pattern</a></li>
+    <li>list <a href="#paths">paths</a></li>
+    <li>PySide.QtGui.QMenu <a href="#menu">menu</a></li>
+	<li>str <a href="#arg">arg</a></li>
+</ul>
+<br>
 
 <h3>方法：</h3>
 <ul>
@@ -27,14 +37,7 @@
     <li><a href="#dropEvent">dropEvent</a>(self, event)</li>
     <li><a href="#clear">clear</a>(self)</li>
 </ul>
-
-<h3>属性：</h3>
-<ul>
-    <li>_sre.SRE_Pattern <a href="#pattern">pattern</a></li>
-    <li>list <a href="#paths">paths</a></li>
-    <li>PySide.QtGui.QMenu <a href="#menu">menu</a></li>
-	<li>str <a href="#arg">arg</a></li>
-</ul>
+<br>
 
 <h3>信号：</h3>
 <ul>
@@ -42,9 +45,33 @@
 </ul>
 <br>
 
-
 <h2>文档</h2>
 <hr>
+
+<div id="pattern"><h4>_sre.SRE_Pattern pattern</h4></div>
+<pre>
+    当将文件拖入路径列表框时，将由pattern作为文件命名规则对拖入文件进行筛选。
+</pre>
+<br>
+
+<div id="paths"><h4>list paths</h4></div>
+<pre>
+    路径列表框记录的路径列表list[str, str……]。
+</pre>
+<br>
+
+<div id="menu"><h4>PySide.QtGui.QMenu menu</h4></div>
+<pre>
+    点击后执行<a href="#clear">clear</a>方法。
+</pre>
+<br>
+
+<div id="arg"><h4>str arg</h4></div>
+<pre>
+    list[str, str……] arg = Path.arg: 查询路径列表框记录的路径列表。
+    Path.arg = list[str, str……] arg: 设置路径列表框记录的路径列表。
+</pre>
+<br>
 
 <div id="__init__"><h4>__init__(self str pattern="")</h4></div>
 <pre>
@@ -79,31 +106,6 @@
 <div id="clear"><h4>clear(self)</h4></div>
 <pre>
     清空路径列表。
-</pre>
-<br>
-
-<div id="pattern"><h4>_sre.SRE_Pattern pattern</h4></div>
-<pre>
-    当将文件拖入路径列表框时，将由pattern作为文件命名规则对拖入文件进行筛选。
-</pre>
-<br>
-
-<div id="paths"><h4>list paths</h4></div>
-<pre>
-    路径列表框记录的路径列表list[str, str……]。
-</pre>
-<br>
-
-<div id="menu"><h4>PySide.QtGui.QMenu menu</h4></div>
-<pre>
-    点击后执行<a href="#clear">clear</a>方法。
-</pre>
-<br>
-
-<div id="arg"><h4>str arg</h4></div>
-<pre>
-    list[str, str……] arg = Path.arg: 查询路径列表框记录的路径列表。
-    Path.arg = list[str, str……] arg: 设置路径列表框记录的路径列表。
 </pre>
 <br>
 

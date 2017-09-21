@@ -1,3 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>styleSheet</title>
+</head>
+
+<style type="text/css">
+    @import"../class.css";
+</style>
+
+<body>
+
+<h1 id="title"><a href="../../../index.html">QFn</a>.<a href="window.html">window</a>.styleSheet</h1>
+
+<h2>说明</h2>
+<hr>
+<pre>
+    储存在data/qss/gray.qss。
+    将界面风格与逻辑代码分来。
+    有机会可换成更骚气的qss。
+</pre>
+
+<h2>内容</h2>
+<hr>
+<pre style="margin-left:36px;">
 QWidget{
     background: #484848;
     color: rgb(200,200,200);
@@ -9,7 +35,6 @@ QWidget{
 QDialog{
     background-color: #505050
 }
-
 
 QPushButton{
     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
@@ -31,7 +56,6 @@ QPushButton::hover{
                                  stop: 1.0 #989898);
     border-color: #505050;
 }
-
 QPushButton::pressed{
     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                  stop: 0.0 #888888,
@@ -56,11 +80,9 @@ QTabBar::tab{
 QTabBar::tab::!selected{
     background: #606060
 }
-
 QTabBar::tab::hover{
     background: #707070
 }
-
 QTabBar::tab::selected{
     background: #808080
 }
@@ -71,7 +93,6 @@ QLineEdit,QAbstractSpinBox,QComboBox{
                                  stop: 0.0 #303030,
                                  stop: 1.0 #808080);
 }
-
 QLineEdit::hover,QAbstractSpinBox::hover,QComboBox::hover{
     border-color:#606060;
 }
@@ -86,12 +107,10 @@ QAbstractSpinBox,QComboBox{
 }
 
 QAbstractItemView{
-    background: #303030;
+    background: #404040;
     border-bottom-left-radius: 2px;
     border-bottom-right-radius: 2px;
 }
-
-QMenu::item{
-    background: #505050;
-    selection-background-color: LightSlateGray;
-}
+</pre>
+</body>
+</html>

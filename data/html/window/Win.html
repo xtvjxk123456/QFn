@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Message</title>
+</head>
+
+<style type="text/css">
+    @import"../class.css";
+</style>
+
+<body>
+
+<h1 id="title"><a href="../../../index.html">QFn</a>.<a href="window.html">window</a>.Option</h1>
+<h3>父类：</h3>
+<ul>
+	<li>PySide.QtGui.QWidget</li>
+</ul>
+<br>
+
+
+
+<h3>属性：</h3>
+<ul>
+	<li><a href="AttributeDict.html">AttributeDict</a> <a href="#message">options</a></li>
+</ul>
+<br>
+
+<h3>方法：</h3>
+<ul>
+    <li>void <a href="#__init__">__init__</a>()</li>
+	<li><a href="#showNormal">showNormal</a>(self)</li>
+    <li><a href="#close">close</a>(self)</li>
+    <li><a href="#apply">apply</a>(self)</li>
+    <li><a href="#add">close</a>(self, function fn)</li>
+    <li>dict <a href="#dumps">dumps</a>(self)</li>
+    <li><a href="#loads">loads</a>(self, dict data)</li>
+</ul>
+<br>
+
+<h3>信号：</h3>
+<ul>
+	<li>void <a href="#applySignal">applySignal</a>()</li>
+    <li>void <a href="#closeSignal">closeSignal</a>()</li>
+    <li>void <a href="#showSignal">showSignal</a>()</li>
+</ul>
+<br>
+
+<h2>文档</h2>
+<hr>
+
+<div id="__init__"><h4>__init__(self)</h4></div>
+<pre>
+    创建与maya工具窗口相似的窗口。
+    点击apply and close按钮依次执行apply,close方法。
+    点击apply按钮执行apply方法。
+    点击close按钮执行close方法。
+    效果如下：
+    <img src="icons/window.PNG">
+</pre>
+<br>
+
+<div id="AttributeDict"><h4>AttributeDict options</h4></div>
+<pre>
+    由函数名称和函数组件构成的键值对。
+</pre>
+<br>
+
+<div id="showNormal"><h4>showNormal(self)</h4></div>
+<pre>
+    显示窗口。
+</pre>
+<br>
+
+<div id="close"><h4>close(self)</h4></div>
+<pre>
+    关闭窗口。
+</pre>
+<br>
+
+<div id="apply"><h4>apply(self)</h4></div>
+<pre>
+    以当前选择的函数组件所表示的参数运行想要函数。
+</pre>
+<br>
+
+<div id="add"><h4>add(self, function fn)</h4></div>
+<pre>
+    参数 fn: python函数。
+    添加相应的函数组件。
+</pre>
+<br>
+
+<div id="dumps"><h4>dict dumps(self)</h4></div>
+<pre>
+    将所有函数组件为可写入yaml的通用数据。
+    返回: 由函数数名和函数组件dump生产的通用数据构成的键值对{str arg: dict option……}
+</pre>
+<br>
+
+<div id="loads"><h4>loads(self, dict data)</h4></div>
+<pre>
+    参数 data: 由函数数名和函数组件dump生产的通用数据构成的键值对{str arg: dict option……}
+    将通用数据转化为窗口的<a href="Option.html">Option</a>。
+</pre>
+<br>
+
+<div id="applySignal"><h4>void applySignal()</h4></div>
+<pre>
+    执行<a href="#apply">apply</a>函数时时发射。
+</pre>
+<br>
+
+<div id="closeSignal"><h4>void closeSignal()</h4></div>
+<pre>
+    执行<a href="#close">close</a>函数时时发射。
+</pre>
+<br>
+
+<div id="showSignal"><h4>void showSignal()</h4></div>
+<pre>
+    执行<a href="#showSignal">showSignal</a>函数时时发射。
+</pre>
+<br>
+
+
+<h2>案例</h2>
+<hr>
+<pre style="margin-left:36px;">
+from QFn import window, fn, args
+
+option = window.Option(fn.man)
+print option
+print option.fn
+option.show()
+
+option(name=args.String(),
+       sex=args.Enum("man", "woman"),
+       body=args.FloatArray(["bust", "waist", "hip"]),
+       save_file=args.Path("txt"),
+       error_arg=args.Path("txt"))
+#根据参数名跟参数类型添加参数组件。
+
+option.widgets.sex.arg = "woman"
+option.widgets["body"].arg = [80.0, 56.0, 81.0]
+#可同Option.arg, Option[arg]两种方式查询参数组建。
+
+new_option = window.Option(fn.more)
+new_option.show()
+
+new_option.load(option.dump())
+#可通过dump与load来进行窗口与参数组建之间的转换。
+
+new_option.kwargs = option.kwargs
+#通过kwargs查询设置参数
+
+</pre>
+</body>
+</html>

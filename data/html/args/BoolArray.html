@@ -18,19 +18,23 @@
 <ul>
 	<li>PySide.QtGui.QWidget</li>
 </ul>
+<br>
+
+<h3>属性：</h3>
+<ul>
+    <li>list <a href="#texts">texts</a></li>
+	<li>list <a href="#arg">arg</a></li>
+</ul>
+<br>
 
 <h3>方法：</h3>
 <ul>
 	<li><a href="#__init__">__init__</a>(self, str *labels)</li>
     <li>str <a href="#__repr__">__repr__</a>(self)</li>
 </ul>
+<br>
 
-<h3>属性：</h3>
-<ul>
-    <li>list <a href="#texts">texts</a></li>
-	<li>list <a href="#arg">arg</a></li>
 
-</ul>
 
 <h3>信号：</h3>
 <ul>
@@ -49,6 +53,13 @@
 </pre>
 <br>
 
+<div id="arg"><h4>list arg</h4></div>
+<pre>
+    list[bool, bool……] arg = BoolArray.arg: 查询每勾选框是否勾选。
+    BoolArray.arg = list[bool, bool……] arg: 设置每勾选框的勾选状态。
+</pre>
+<br>
+
 <div id="__repr__"><h4>str __repr__(self)</h4></div>
 <pre>
     返回 BoolArray(*texts)。
@@ -61,12 +72,7 @@
 </pre>
 <br>
 
-<div id="arg"><h4>list arg</h4></div>
-<pre>
-    list[bool, bool……] arg = BoolArray.arg: 查询每勾选框是否勾选。
-    BoolArray.arg = list[bool, bool……] arg: 设置每勾选框的勾选状态。
-</pre>
-<br>
+
 
 <div id="argChanged"><h4>void argChanged(list)</h4></div>
 <pre>

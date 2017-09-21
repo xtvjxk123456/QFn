@@ -51,7 +51,7 @@
 
 <div id="fn"><h4>function fn</h4></div>
 <pre>
-    python函数。
+    python函数。仅支持模块下直接通过def创建的普通函数，特殊方法生成的函数需要再次封装。
 </pre>
 <br>
 
@@ -135,7 +135,7 @@
 </pre>
 <br>
 
-<div id="__call__"><h4>__call__(self, **kwargs)</h4></div>
+<div id="__call__"><h4>__call__(self)</h4></div>
 <pre>
     记录参数到<a href="#json">json</a>，执行函数，若运行错误，记录错误信息到<a href="#log">log</a>。
 </pre>

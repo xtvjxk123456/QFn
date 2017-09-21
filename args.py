@@ -417,5 +417,3 @@ class PathArray(QtGui.QListWidget):
             return "{self.__class__.__name__}('{self.pattern.pattern}')".format(self=self)
         else:
             return "{self.__class__.__name__}()".format(self=self)
-
-

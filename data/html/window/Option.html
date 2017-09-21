@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Message</title>
+</head>
+
+<style type="text/css">
+    @import"../class.css";
+</style>
+
+<body>
+
+<h1 id="title"><a href="../../../index.html">QFn</a>.<a href="window.html">window</a>.Option</h1>
+<h3>父类：</h3>
+<ul>
+	<li>PySide.QtGui.QWidget</li>
+</ul>
+<br>
+
+
+
+<h3>属性：</h3>
+<ul>
+	<li><a href="Message.html">Message</a> <a href="#message">message</a></li>
+    <li><a href="../function/Fun.html">Function</a> <a href="#fn">fn</a></li>
+    <li>dict <a href="#kwargs">kwargs</a></li>
+    <li><a href="AttributeDict.html">AttributeDict</a> <a href="#widgets">widgets</a></li>
+    <li>PySide.QtGui.QMenu <a href="#menu">menu</a></li>
+    <li>str <a href="#html">html</a></li>
+</ul>
+<br>
+
+<h3>方法：</h3>
+<ul>
+	<li><a href="#__init__">__init__</a>(self, function fn)</li>
+    <li><a href="#__call__">__call__</a>(self, dict **kwargs)</li>
+    <li>str <a href="#__repr__">__repr__</a>(self)</li>
+    <li><a href="#contextMenuEvent">contextMenuEvent</a>(self, event)</li>
+    <li>dict <a href="#dump">dump</a>(self)</li>
+    <li><a href="#load">load</a>(self, dict data)</li>
+    <li><a href="#reset">reset</a>(self)</li>
+    <li><a href="#help">help</a>(self)</li>
+</ul>
+<br>
+
+<h2>文档</h2>
+<hr>
+
+<div id="message"><h4>Message message</h4></div>
+<pre>
+    用来显示函数帮助的组件Message(""function help")。
+</pre>
+<br>
+
+<div id="fn"><h4>Function fn</h4></div>
+<pre>
+    参数选项组件对应的函数。
+</pre>
+<br>
+
+<div id="kwargs"><h4>dict kwargs</h4></div>
+<pre>
+    由参数名和参数值构成的键值对.
+    dict kwargs = Option.kwargs 查询参数选项组件所代表的参数。
+    Option.kwargs = dict kwargs 设置参数选项组件所代表的参数。
+</pre>
+<br>
+
+<div id="widgets"><h4>AttributeDict widgets</h4></div>
+<pre>
+    由参数名和参数组件键值对AttributeDict(arg=QWidget widget,……)
+</pre>
+<br>
+
+<div id="menu"><h4>PySide.QtGui.QMenu menu</h4></div>
+<pre>
+    右键菜单。
+    点击reset后执行<a href="#reset">reset</a>方法。
+    点击help后执行<a href="#help">help</a>方法。
+    效果如下：
+    <img src="icons/menu.PNG">
+</pre>
+<br>
+
+<div id="html"><h4>str html</h4></div>
+<pre>
+    函数文档对应网页文件的路径。
+</pre>
+<br>
+
+<div id="__init__"><h4>str __init__(self, function fn)</h4></div>
+<pre>
+    参数 fn: 参数选项组件对应的函数。
+</pre>
+<br>
+
+<div id="__call__"><h4>str __call__(self, dict **kwargs)</h4></div>
+<pre>
+    kwargs：由参数名和参数组件键值对{str arg: QWidget widget……}
+    参数名下划线会转化成空格、首字母大小、后缀加：。
+    例：point_on_curve>Point On Curve:
+    以 参数名:参数组件 的形式竖向添加到选项组建。
+    添加顺序为原函数参数顺数。
+    可适当改变原函数的参数名和参数顺序来让界面好看一些。
+    效果如下：
+    <img src="icons/option.PNG">
+</pre>
+<br>
+
+<div id="__repr__"><h4>str __repr__(self)</h4></div>
+<pre>
+    返回：QFn.window.Option(fn)
+</pre>
+<br>
+
+<div id="contextMenuEvent"><h4>contextMenuEvent(self, event)</h4></div>
+<pre>
+    右击时，在鼠标位置显示<a href="#menu">menu</a>。
+</pre>
+<br>
+
+<div id="dump"><h4>dict dump(self)</h4></div>
+<pre>
+    将参数组建转化为可写入yaml的通用数据。
+    返回：由参数名和可通过eval生成参数组件的字符串构成的键值对{str arg: str widget……}
+</pre>
+<br>
+
+<div id="load"><h4>load(self, dict data)</h4></div>
+<pre>
+    参数 data: 由参数名和可通过eval生成参数组件的字符串构成的键值对{str arg: str widget……}。
+    将data转化为参数选项组建。
+</pre>
+<br>
+
+<div id="reset"><h4>reset(self)</h4></div>
+<pre>
+    将参数组建的值设置成函数默认值。
+</pre>
+<br>
+
+<div id="help"><h4>help(self)</h4></div>
+<pre>
+    若设置了<a href="#html">html</a>，则打开网页。该功能暂仅支持本地html文件。
+    若未设置<a href="#html">html</a>，则显示函数帮助。
+    <img src="icons/help.PNG">
+</pre>
+<br>
+
+<h2>案例</h2>
+<hr>
+<pre style="margin-left:36px;">
+from QFn import window, fn, args
+
+option = window.Option(fn.man)
+print option
+print option.fn
+option.show()
+
+option(name=args.String(),
+       sex=args.Enum("man", "woman"),
+       body=args.FloatArray(["bust", "waist", "hip"]),
+       save_file=args.Path("txt"),
+       error_arg=args.Path("txt"))
+#根据参数名跟参数类型添加参数组件。
+
+option.widgets.sex.arg = "woman"
+option.widgets["body"].arg = [80.0, 56.0, 81.0]
+#可同Option.arg, Option[arg]两种方式查询参数组建。
+
+new_option = window.Option(fn.more)
+new_option.show()
+
+new_option.load(option.dump())
+#可通过dump与load来进行窗口与参数组建之间的转换。
+
+new_option.kwargs = option.kwargs
+#通过kwargs查询设置参数
+
+</pre>
+</body>
+</html>

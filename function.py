@@ -162,6 +162,8 @@ class Function(object):
             self.default = dict(zip(args_pec.args[-len(args_pec.defaults)-1:], args_pec.defaults))
             if not self.json:
                 self.json.write(self.default)
+        else:
+            self.default = {}
 
     def __contains__(self, arg):
         u"""

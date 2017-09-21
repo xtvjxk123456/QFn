@@ -18,17 +18,19 @@
 	<li>PySide.QtGui.QWidget</li>
 </ul>
 
-<h3>方法：</h3>
-<ul>
-	<li><a href="#__init__">__init__</a>(self str ext = "")</li>
-    <li>str <a href="#__repr__">__repr__</a>(self)</li>
-</ul>
-
 <h3>属性：</h3>
 <ul>
     <li>str <a href="#ext">ext</a></li>
 	<li>str <a href="#arg">arg</a></li>
 </ul>
+<br>
+
+<h3>方法：</h3>
+<ul>
+	<li><a href="#__init__">__init__</a>(self str ext = "")</li>
+    <li>str <a href="#__repr__">__repr__</a>(self)</li>
+</ul>
+<br>
 
 <h3>信号：</h3>
 <ul>
@@ -36,9 +38,21 @@
 </ul>
 <br>
 
-
 <h2>文档</h2>
 <hr>
+
+<div id="ext"><h4>str ext</h4></div>
+<pre>
+    文件扩展名。
+</pre>
+<br>
+
+<div id="arg"><h4>str arg</h4></div>
+<pre>
+    str arg = Path.arg: 查询文件选择框文本。
+    Path.arg = str arg: 设置文件选择框文本。
+</pre>
+<br>
 
 <div id="__init__"><h4>__init__(self str ext = "")</h4></div>
 <pre>
@@ -55,19 +69,6 @@
 <div id="__repr__"><h4>str __repr__(self)</h4></div>
 <pre>
     返回 Path(ext)。
-</pre>
-<br>
-
-<div id="ext"><h4>str ext</h4></div>
-<pre>
-    文件扩展名。
-</pre>
-<br>
-
-<div id="arg"><h4>str arg</h4></div>
-<pre>
-    str arg = Path.arg: 查询文件选择框文本。
-    Path.arg = str arg: 设置文件选择框文本。
 </pre>
 <br>
 
