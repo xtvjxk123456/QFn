@@ -16,7 +16,7 @@ class AttributeDict(dict):
         :return: 将attr当作字典中的key查询到的值。
         当通过AttributeDict.attr访问dict不存在的属性时调用。
         """
-        return self.__getitem__(attr)
+        return self[attr]
 
 
 class Message(object):

@@ -129,30 +129,31 @@
 <pre style="margin-left:36px;">
 from QFn import window, fn, args
 
-option = window.Option(fn.man)
-print option
-print option.fn
-option.show()
+win = window.Window()
+win.showNormal()
 
-option(name=args.String(),
-       sex=args.Enum("man", "woman"),
-       body=args.FloatArray(["bust", "waist", "hip"]),
-       save_file=args.Path("txt"),
-       error_arg=args.Path("txt"))
-#根据参数名跟参数类型添加参数组件。
+win.add(fn.man)
+win.options.man(
+    name=args.String(),
+    sex=args.Enum("man", "woman"),
+    body=args.FloatArray(["bust", "waist", "hip"]),
+    save_file=args.Path("txt"),
+    error_arg=args.Path("txt")
+)
 
-option.widgets.sex.arg = "woman"
-option.widgets["body"].arg = [80.0, 56.0, 81.0]
-#可同Option.arg, Option[arg]两种方式查询参数组建。
+win.add(fn.more)
+win.options.more(
+    path_array=args.PathArray(),
+    int=args.Int(),
+    int_array=args.IntArray(["IntA", "IntB", "IntC"]),
+    bool=args.Bool(),
+    bool_array=args.BoolArray("BoolA", "BoolB", "BoolC"),
+)
 
-new_option = window.Option(fn.more)
-new_option.show()
 
-new_option.load(option.dump())
-#可通过dump与load来进行窗口与参数组建之间的转换。
-
-new_option.kwargs = option.kwargs
-#通过kwargs查询设置参数
+new_window = window.Window()
+new_window.showNormal()
+new_window.loads(win.dumps())
 
 </pre>
 </body>

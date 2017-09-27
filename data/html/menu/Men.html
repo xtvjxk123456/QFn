@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Menu</title>
+</head>
+
+<style type="text/css">
+    @import"../class.css";
+</style>
+
+<body>
+
+<h1 id="title"><a href="../../../index.html">QFn</a>.<a href="menu.html">menu</a>.Menu</h1>
+<h3>父类：</h3>
+<ul>
+	<li>PySide.QtGui.QMenu</li>
+</ul>
+<br>
+
+
+
+<h3>属性：</h3>
+<ul>
+    <li>path <a href="#path">path</a></li>
+    <li><a href="../window/AttributeDict.html">AttributeDict</a> <a href="#items">items</a></li>
+</ul>
+<br>
+
+<h3>方法：</h3>
+<ul>
+	<li><a href="#__init__">__init__</a>(self, str path)</li>
+    <li><a href="#addMenu">addMenu</a>(self, str text)</li>
+    <li><a href="#addAction">addAction</a>(self, str text)</li>
+    <li><a href="#install">install</a>(self)</li>
+    <li><a href="#uninstall">uninstall</a>(self)</li>
+</ul>
+<br>
+
+
+<h2>文档</h2>
+<hr>
+
+<div id="path"><h4>str path</h4></div>
+<pre>
+    功能菜单对应文件路径。
+</pre>
+<br>
+
+<div id="items"><h4>AttributeDict items</h4></div>
+<pre>
+    由菜单名和菜单组件构成的键值对。
+</pre>
+<br>
+
+<div id="__init__"><h4>__init__(self, str path, Menu parent=None)</h4></div>
+<pre>
+    参数 path: 功能菜单对应文件路径。
+    参数 parent: 父级菜单。
+    path是一个去除后缀的相对路径。
+    例：D:/menu/test
+    需要时再加上对应后缀（.jpg、.yaml……）来对对实际的文件路径进行查询使用。
+</pre>
+<br>
+
+<div id="addMenu"><h4>addMenu(self, str text)</h4></div>
+<pre>
+    参数 text：菜单名。
+    添加子菜单。
+</pre>
+<br>
+
+<div id="addAction"><h4>addAction(self, str text)</h4></div>
+<pre>
+    参数 text：菜单名。
+    添加功能菜单。
+</pre>
+<br>
+
+<div id="install"><h4>install(self)</h4></div>
+<pre>
+    在当前根界面QApplication中遍历查询子组件QMenuBar。并将Menu添加到查询到QMenuBar上。
+    这是一个相对粗暴的添加方案。可以用其它方案将菜单添加到想要适当的地方。
+</pre>
+<br>
+
+<div id="uninstall"><h4>read(self)</h4></div>
+<pre>
+    从menuBar上移除菜单。
+</pre>
+<br>
+
+<h2>案例</h2>
+<hr>
+<pre style="margin-left:36px;">
+import QFn
+import os
+
+window = QFn.Window()
+window.showNormal()
+
+window.add(QFn.fn.man)
+window.options.man(
+    name=QFn.args.String(),
+    sex=QFn.args.Enum("man", "woman"),
+    body=QFn.args.FloatArray(["bust", "waist", "hip"]),
+    save_file=QFn.args.Path("txt"),
+    error_arg=QFn.args.Path("txt")
+)
+
+window.add(QFn.fn.more)
+window.options.more(
+    path_array=QFn.args.PathArray(),
+    int=QFn.args.Int(),
+    int_array=QFn.args.IntArray(["IntA", "IntB", "IntC"]),
+    bool=QFn.args.Bool(),
+    bool_array=QFn.args.BoolArray("BoolA", "BoolB", "BoolC"),
+)
+
+
+
+menu = QFn.Menu(QFn.dataDir+"/menu/maya")
+menu.install()
+
+menu.addMenu("test")
+menu.items.test.addAction("test")
+menu.items.test.items.test.write(window)
+</pre>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Message</title>
+</head>
+
+<style type="text/css">
+    @import"../class.css";
+</style>
+
+<body>
+
+<h1 id="title"><a href="../../../index.html">QFn</a>.<a href="menu.html">menu</a>.Action</h1>
+<h3>父类：</h3>
+<ul>
+	<li>PySide.QtGui.QAction</li>
+</ul>
+<br>
+
+
+
+<h3>属性：</h3>
+<ul>
+    <li>path <a href="#path">path</a></li>
+</ul>
+<br>
+
+<h3>方法：</h3>
+<ul>
+	<li><a href="#__init__">__init__</a>(self, str path)</li>
+    <li><a href="#read">read</a>(self)</li>
+    <li><a href="#write">write</a>(self, <a href="../window/Win.html">Window</a> window)</li>
+</ul>
+<br>
+
+<h3>信号：</h3>
+<ul>
+	<li>void <a href="#windowSignal">windowSignal</a>(<a href="../window/Win.html">Window</a> window)</li>
+</ul>
+<br>
+
+<h2>文档</h2>
+<hr>
+
+<div id="path"><h4>str path</h4></div>
+<pre>
+    功能菜单对应文件路径。
+</pre>
+<br>
+
+<div id="window"><h4><a href="../window/Win.html">Window</a> window</h4></div>
+<pre>
+    功能函数窗口。
+    窗口是通过读取对应yaml文件创建的。
+    窗口在菜单第一次点击时才会创建。
+</pre>
+<br>
+
+<div id="__init__"><h4>__init__(self, str path, Menu parent=None)</h4></div>
+<pre>
+    参数 path: 功能菜单对应文件路径。
+    参数 parent: 父级菜单。
+    path是一个去除后缀的相对路径。
+    例：D:/menu/test
+    需要时再加上对应后缀（.jpg、.yaml……）来对对实际的文件路径进行查询使用。
+</pre>
+<br>
+
+<div id="read"><h4>read(self)</h4></div>
+<pre>
+    点击菜单时调用的函数。
+    读取yaml,若yaml中仅记录一个无参函数，则直接执行。
+    否则，创建并显示<a href="#window">window</a>。
+</pre>
+<br>
+
+<div id="write"><h4>write(self, <a href="../window/Win.html">Window</a> window)</h4></div>
+<pre>
+    参数 window: 功能函数窗口。
+    将window窗口写入对应yaml文件。
+</pre>
+<br>

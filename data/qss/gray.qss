@@ -93,5 +93,9 @@ QAbstractItemView{
 
 QMenu::item{
     background: #505050;
+    font-size: 10px;
     selection-background-color: LightSlateGray;
+}
+QAction{
+    font-size: 10px;
 }
