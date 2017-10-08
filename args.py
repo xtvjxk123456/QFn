@@ -172,7 +172,7 @@ class Float(QtGui.QDoubleSpinBox):
         QtGui.QDoubleSpinBox.__init__(self)
         self.setRange(max(min_value, -2147483648), min(max_value, 2147483647))
         self.argChanged = self.valueChanged
-        self.setFixedWidth(QtGui.QFontMetrics(self.font()).width(str(self.value()) + "000"))
+        self.setFixedWidth(QtGui.QFontMetrics(self.font()).width(str(self.value()) + "0000"))
 
     @property
     def arg(self):
@@ -192,7 +192,7 @@ class Float(QtGui.QDoubleSpinBox):
 
     def paintEvent(self, event):
         QtGui.QDoubleSpinBox.paintEvent(self, event)
-        width = QtGui.QFontMetrics(self.font()).width(str(self.value()) + "000")
+        width = QtGui.QFontMetrics(self.font()).width(str(self.value()) + "0000")
         width = max(QtGui.QFontMetrics(self.font()).width("0000000"), width)
         self.setFixedWidth(width)
 
@@ -272,7 +272,7 @@ class Enum(QtGui.QComboBox):
 
     def paintEvent(self, event):
         QtGui.QComboBox.paintEvent(self, event)
-        self.setFixedWidth(QtGui.QFontMetrics(self.font()).width(self.arg+"000"))
+        self.setFixedWidth(QtGui.QFontMetrics(self.font()).width(self.arg+"0000"))
 
     @property
     def arg(self):

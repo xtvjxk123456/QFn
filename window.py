@@ -3,6 +3,7 @@
 from PySide import QtGui, QtCore
 import os
 import args
+import yaml
 from function import Function
 
 with open(os.path.dirname(__file__)+"/data/qss/gray.qss") as _qss:
@@ -162,7 +163,14 @@ class Window(QtGui.QDialog):
     closeSignal = QtCore.Signal()
     showSignal = QtCore.Signal()
 
-    def __init__(self):
+    def __init__(self, path=None):
+        u"""
+        :param path: 对应yaml文件路径。若yaml存在，则直接读取yaml创建options.
+        创建与maya工具窗口相似的窗口。
+        点击apply and close按钮依次执行apply,close方法。
+        点击apply按钮执行apply方法。
+        点击close按钮执行close方法。
+        """
         QtGui.QDialog.__init__(self)
         self.setParent(QtGui.QApplication.activeWindow())
         self.setWindowFlags(QtCore.Qt.WindowFlags(1))
@@ -182,6 +190,18 @@ class Window(QtGui.QDialog):
         self.layout().itemAt(1).layout().itemAt(1).widget().clicked.connect(self.apply)
         self.layout().itemAt(1).layout().itemAt(2).widget().clicked.connect(self.close)
         self.options = AttributeDict()
+        self.path = path
+        self.html = None
+        if path:
+            html = os.path.splitext(path)[0] + ".html"
+            if os.path.isfile(html):
+                self.html = html
+            with open(path, "r") as ui:
+                for fn, tab_data in yaml.load(ui.read()).items():
+                    self.add(fn).load(tab_data)
+
+    def __repr__(self):
+        return "{self.__module__}.{self.__class__.__name__}('{self.path}')".format(self=self)
 
     def showNormal(self):
         u"""
@@ -211,23 +231,18 @@ class Window(QtGui.QDialog):
         添加相应的函数组件。
         """
         option = Option(fn)
+        option.html = self.html
         self.options[option.fn.name] = option
         self.layout().itemAt(0).widget().addTab(option, option.fn.name)
         return option
 
-    def dumps(self):
-        u"""
-        将所有函数组件为可写入yaml的通用数据。
-        :return: 由函数数名和函数组件dump生产的通用数据构成的键值对{str arg: dict option……}
+    def save(self, path=None):
         """
-        return {option.fn.fullName: option.dump() for option in self.options.values()}
-
-    def loads(self, data):
-        u"""
-        :param data: 由函数数名和函数组件dump生产的通用数据构成的键值对{str arg: dict option……}
-        将通用数据转化为窗口的Option。
+        :param path: yaml文件路径<str>
+        将当前窗口储存为yaml文件。
         """
-        for fn, tab_data in data.items():
-            self.add(fn).load(tab_data)
-
-
+        if path is not None:
+            self.path = path
+        with open(path, "w") as ui:
+            data = {option.fn.fullName: option.dump() for option in self.options.values()}
+            ui.write(yaml.dump(data, default_flow_style=False))

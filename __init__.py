@@ -2,9 +2,8 @@
 import os as _os
 import args
 from function import Function
-from window import Window
 from menu import Menu
-import fn
+from window import Window
 
 dataDir = _os.path.dirname(__file__).replace("\\", "/")+"/data"
 

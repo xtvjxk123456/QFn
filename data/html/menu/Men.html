@@ -14,7 +14,7 @@
 <h1 id="title"><a href="../../../index.html">QFn</a>.<a href="menu.html">menu</a>.Menu</h1>
 <h3>父类：</h3>
 <ul>
-	<li>PySide.QtGui.QMenu</li>
+	<li>object</li>
 </ul>
 <br>
 
@@ -23,17 +23,17 @@
 <h3>属性：</h3>
 <ul>
     <li>path <a href="#path">path</a></li>
-    <li><a href="../window/AttributeDict.html">AttributeDict</a> <a href="#items">items</a></li>
+    <li>cache <a href="#cache">cache</a></li>
 </ul>
 <br>
 
 <h3>方法：</h3>
 <ul>
 	<li><a href="#__init__">__init__</a>(self, str path)</li>
-    <li><a href="#addMenu">addMenu</a>(self, str text)</li>
-    <li><a href="#addAction">addAction</a>(self, str text)</li>
-    <li><a href="#install">install</a>(self)</li>
-    <li><a href="#uninstall">uninstall</a>(self)</li>
+    <li><a href="#write">write</a>(self)</li>
+    <li><a href="#read">read</a>(self)</li>
+    <li><a href="#apply">apply</a>(self, str path)</li>
+    <li><a href="#reload">reload</a>(self)</li>
 </ul>
 <br>
 
@@ -41,90 +41,61 @@
 <h2>文档</h2>
 <hr>
 
-<div id="path"><h4>str path</h4></div>
+<div id="path"><h4>path</h4></div>
 <pre>
-    功能菜单对应文件路径。
+    菜单对应文件夹路径。
 </pre>
 <br>
 
-<div id="items"><h4>AttributeDict items</h4></div>
+<div id="cache"><h4>cache</h4></div>
 <pre>
-    由菜单名和菜单组件构成的键值对。
+    窗口缓存。
 </pre>
 <br>
 
-<div id="__init__"><h4>__init__(self, str path, Menu parent=None)</h4></div>
+<div id="__init__"><h4>__init__(self, str path)</h4></div>
 <pre>
-    参数 path: 功能菜单对应文件路径。
-    参数 parent: 父级菜单。
-    path是一个去除后缀的相对路径。
-    例：D:/menu/test
-    需要时再加上对应后缀（.jpg、.yaml……）来对对实际的文件路径进行查询使用。
+    参数 path: 菜单对应文件夹路径。
 </pre>
 <br>
 
-<div id="addMenu"><h4>addMenu(self, str text)</h4></div>
+<div id="write"><h4>write(self)</h4></div>
 <pre>
-    参数 text：菜单名。
-    添加子菜单。
+    遍历path文件夹下的文件，获取建立菜单需要的菜单数据列表，储存在self.path+"/menu.json"下。
+    菜单数据列表为菜单数据构成的列表。每菜单数据结构如下。
+    {
+        "path": 对应文件夹或yaml文件路径，
+        "icon": 对应图标路径，
+        "html": 对应帮助路径，
+        "name": 菜单名，
+        "children": 子菜单数据列表
+    }
+    该方法需在更新菜单后手动运行一次来更新数据。
 </pre>
 <br>
 
-<div id="addAction"><h4>addAction(self, str text)</h4></div>
+<div id="read"><h4>read(self, str path)</h4></div>
 <pre>
-    参数 text：菜单名。
-    添加功能菜单。
+    直接读取self.path+"/menu.json"中的数据创建菜单。
 </pre>
 <br>
 
-<div id="install"><h4>install(self)</h4></div>
+
+<div id="apply"><h4>apply(self, str path)</h4></div>
 <pre>
-    在当前根界面QApplication中遍历查询子组件QMenuBar。并将Menu添加到查询到QMenuBar上。
-    这是一个相对粗暴的添加方案。可以用其它方案将菜单添加到想要适当的地方。
+    param path: yaml文件路径。
+    通过yaml文件创建窗口并显示。
+    初次创建的窗口会储存在cache供第二次执行使用，避免重复创建。
+    若yaml中仅记录一个无参函数，则直接运行该函数。
 </pre>
 <br>
 
-<div id="uninstall"><h4>read(self)</h4></div>
+<div id="reload"><h4>reload(self)</h4></div>
 <pre>
-    从menuBar上移除菜单。
+    重新加载所有已创建窗口对应函数的模块。
+    在修改测试函数时避免重新创建窗口。
 </pre>
 <br>
 
-<h2>案例</h2>
-<hr>
-<pre style="margin-left:36px;">
-import QFn
-import os
-
-window = QFn.Window()
-window.showNormal()
-
-window.add(QFn.fn.man)
-window.options.man(
-    name=QFn.args.String(),
-    sex=QFn.args.Enum("man", "woman"),
-    body=QFn.args.FloatArray(["bust", "waist", "hip"]),
-    save_file=QFn.args.Path("txt"),
-    error_arg=QFn.args.Path("txt")
-)
-
-window.add(QFn.fn.more)
-window.options.more(
-    path_array=QFn.args.PathArray(),
-    int=QFn.args.Int(),
-    int_array=QFn.args.IntArray(["IntA", "IntB", "IntC"]),
-    bool=QFn.args.Bool(),
-    bool_array=QFn.args.BoolArray("BoolA", "BoolB", "BoolC"),
-)
-
-
-
-menu = QFn.Menu(QFn.dataDir+"/menu/maya")
-menu.install()
-
-menu.addMenu("test")
-menu.items.test.addAction("test")
-menu.items.test.items.test.write(window)
-</pre>
 </body>
 </html>

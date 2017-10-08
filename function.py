@@ -28,8 +28,6 @@ class Log(object):
         :param texts: 日志文本 <str>。
         记录日志文本到日志路径。
         """
-        for text in texts:
-            print text
         texts = [text + '\r\n' for text in texts]
         if not os.path.isfile(self.path):
             if not os.path.isdir(os.path.dirname(self.path)):

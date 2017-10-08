@@ -28,13 +28,12 @@
 
 <h3>方法：</h3>
 <ul>
-    <li>void <a href="#__init__">__init__</a>()</li>
+    <li>void <a href="#__init__">__init__</a>(str path=None)</li>
 	<li><a href="#showNormal">showNormal</a>(self)</li>
     <li><a href="#close">close</a>(self)</li>
     <li><a href="#apply">apply</a>(self)</li>
     <li><a href="#add">close</a>(self, function fn)</li>
-    <li>dict <a href="#dumps">dumps</a>(self)</li>
-    <li><a href="#loads">loads</a>(self, dict data)</li>
+    <li>dict <a href="#dumps">save</a>(self, str path=None)</li>
 </ul>
 <br>
 
@@ -49,8 +48,9 @@
 <h2>文档</h2>
 <hr>
 
-<div id="__init__"><h4>__init__(self)</h4></div>
+<div id="__init__"><h4>__init__(self, str path=None)</h4></div>
 <pre>
+    参数 path: 对应yaml文件路径。若yaml存在，则直接读取yaml创建options.
     创建与maya工具窗口相似的窗口。
     点击apply and close按钮依次执行apply,close方法。
     点击apply按钮执行apply方法。
@@ -91,17 +91,10 @@
 </pre>
 <br>
 
-<div id="dumps"><h4>dict dumps(self)</h4></div>
+<div id="save"><h4>save(self, str path=None)</h4></div>
 <pre>
-    将所有函数组件为可写入yaml的通用数据。
-    返回: 由函数数名和函数组件dump生产的通用数据构成的键值对{str arg: dict option……}
-</pre>
-<br>
-
-<div id="loads"><h4>loads(self, dict data)</h4></div>
-<pre>
-    参数 data: 由函数数名和函数组件dump生产的通用数据构成的键值对{str arg: dict option……}
-    将通用数据转化为窗口的<a href="Option.html">Option</a>。
+    参数 path: yaml文件路径<str>
+    将当前窗口储存为yaml文件。
 </pre>
 <br>
 
@@ -150,10 +143,10 @@ win.options.more(
     bool_array=args.BoolArray("BoolA", "BoolB", "BoolC"),
 )
 
+win.save("D:/test.yaml")
 
-new_window = window.Window()
-new_window.showNormal()
-new_window.loads(win.dumps())
+new_winodw = window.Window("D:/test.yaml")
+new_winodw.show()
 
 </pre>
 </body>
