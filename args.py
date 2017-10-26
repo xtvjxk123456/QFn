@@ -21,283 +21,127 @@ PathArray: 文件列表框<list[str, str……]>
 
 from PySide import QtGui, QtCore
 import re
+import os
 import sys
 
 
-class Bool(QtGui.QCheckBox):
+class ArgWidget(object):
+    type = None
+
+    @classmethod
+    def is_arg(cls, value):
+        return isinstance(value, cls.type)
+
+    @classmethod
+    def instance(cls, value):
+        if cls.is_arg(value):
+            return cls()
+
+    @property
+    def arg(self):
+        return self.get_arg()
+
+    @arg.setter
+    def arg(self, arg):
+        if self.is_arg(arg):
+            self.set_arg(arg)
+        else:
+            sys.stderr.write("{self}.arg type must be {self.__class__.__name__}".format(self=self))
+
+    def __repr__(self):
+        return "{self.__module__}.{self.__class__.__name__}()".format(self=self)
+
+
+class Bool(QtGui.QCheckBox, ArgWidget):
+    type = bool
+
     def __init__(self):
         QtGui.QCheckBox.__init__(self)
         self.argChanged = self.toggled
-
-    @property
-    def arg(self):
-        return self.isChecked()
-
-    @arg.setter
-    def arg(self, value):
-        if isinstance(value, bool):
-            self.setChecked(value)
-        else:
-            sys.stderr.write("{self}.arg must be bool".format(self=self))
-
-    def __repr__(self):
-        return "{self.__class__.__name__}()".format(self=self)
+        self.get_arg = self.isChecked
+        self.set_arg = self.setChecked
 
 
-class BoolArray(QtGui.QWidget):
-    argChanged = QtCore.Signal(list)
+class Int(QtGui.QSpinBox, ArgWidget):
+    type = int
 
-    def __init__(self, *texts):
-        u"""
-        :param texts: 每勾选框文本<tuple(str,str……)>
-        """
-        QtGui.QWidget.__init__(self)
-        self.texts = list(texts)
-        self.setLayout(QtGui.QHBoxLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)
-
-        def emit_args():
-            self.argChanged.emit(self.arg)
-
-        for index, text in enumerate(self.texts):
-            self.layout().addWidget(QtGui.QCheckBox(text))
-            self.layout().itemAt(index).widget().toggled.connect(emit_args)
-
-    @property
-    def arg(self):
-        return [self.layout().itemAt(index).widget().isChecked() for index in range(self.layout().count())]
-
-    @arg.setter
-    def arg(self, value):
-        if hasattr(value, "__iter__"):
-            value = [i for i in value if isinstance(i, bool)]
-            if len(value) == self.layout().count():
-                for index in range(self.layout().count()):
-                    self.layout().itemAt(index).widget().setChecked(value[index])
-                return
-        warnings = "{self}.arg must be {length} bool list".format(self=self, length=self.layout().count())
-        sys.stderr.write(warnings)
-
-    def __repr__(self):
-        return "{self.__class__.__name__}({labels})".format(self=self, labels=repr(self.texts)[1:-1])
-
-
-class Int(QtGui.QSpinBox):
-
-    def __init__(self, min_value=-2147483648, max_value=2147483647):
-        u"""
-        :param min_value: 最小值
-        :param max_value: 最大值
-        """
+    def __init__(self):
         QtGui.QSpinBox.__init__(self)
-        self.setRange(max(min_value, -2147483648), min(max_value, 2147483647))
+        self.setRange(-2147483648, 2147483647)
         self.argChanged = self.valueChanged
-        self.setFixedWidth(QtGui.QFontMetrics(self.font()).width(str(self.value()) + "000"))
-
-    @property
-    def arg(self):
-        return self.value()
-
-    @arg.setter
-    def arg(self, value):
-        if isinstance(value, int):
-            self.setValue(value)
-        else:
-            sys.stderr.write("{self}.arg must be int".format(self=self))
-
-    def __repr__(self):
-        if self.maximum() == 2147483647 and self.minimum() == -2147483648:
-            return "{self.__class__.__name__}()".format(self=self)
-        return "{self.__class__.__name__}({min},{max})".format(self=self, min=self.minimum(), max=self.maximum())
-
-    def paintEvent(self, event):
-        QtGui.QSpinBox.paintEvent(self, event)
-        width = QtGui.QFontMetrics(self.font()).width(str(self.value()) + "000")
-        width = max(QtGui.QFontMetrics(self.font()).width("0000000"), width)
-        self.setFixedWidth(width)
+        self.get_arg = self.value
+        self.set_arg = self.setValue
 
 
-class IntArray(QtGui.QWidget):
-    argChanged = QtCore.Signal(list)
+class Float(QtGui.QDoubleSpinBox, ArgWidget):
+    type = float
 
-    def __init__(self, labels, min_value=-2147483648, max_value=2147483647):
-        u"""
-        :param labels: 每整数输入框标签<tuple(str,str……)>
-        :param min_value: 最小值
-        :param max_value: 最大值
-        """
-        QtGui.QWidget.__init__(self)
-        self.labels = labels
-        self.setLayout(QtGui.QHBoxLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)
-
-        def emit_args():
-            self.argChanged.emit(self.arg)
-
-        for index, label in enumerate(labels):
-            self.layout().addWidget(QtGui.QLabel(label+": "))
-            self.layout().addWidget(Int(min_value, max_value))
-            self.layout().itemAt(index * 2 + 1).widget().valueChanged.connect(emit_args)
-
-    @property
-    def arg(self):
-        return [self.layout().itemAt(index * 2 + 1).widget().value() for index in range(self.layout().count()/2)]
-
-    @arg.setter
-    def arg(self, value):
-        if hasattr(value, "__iter__"):
-            value = [i for i in value if isinstance(i, int)]
-            if len(value) == self.layout().count() / 2:
-                for index in range(self.layout().count() / 2):
-                    self.layout().itemAt(index * 2 + 1).widget().arg = value[index]
-                return
-        warnings = "{self}.arg must be {length} int".format(self=self, length=self.layout().count()/2)
-        sys.stderr.write(warnings)
-
-    def __repr__(self):
-        min_value = self.layout().itemAt(1).widget().minimum()
-        max_value = self.layout().itemAt(1).widget().maximum()
-        if max_value == 2147483647 and min_value == -2147483648:
-            return "{self.__class__.__name__}({self.labels})".format(self=self)
-        return "{self.__class__.__name__}({self.labels},{min},{max})".format(self=self, min=min_value, max=max_value)
-
-
-class Float(QtGui.QDoubleSpinBox):
-
-    def __init__(self, min_value=-2147483648, max_value=2147483647):
-        u"""
-        :param min_value: 最小值
-        :param max_value: 最大值
-        """
+    def __init__(self):
         QtGui.QDoubleSpinBox.__init__(self)
-        self.setRange(max(min_value, -2147483648), min(max_value, 2147483647))
+        self.setRange(-2147483648, 2147483647)
+        self.setDecimals(4)
         self.argChanged = self.valueChanged
-        self.setFixedWidth(QtGui.QFontMetrics(self.font()).width(str(self.value()) + "0000"))
-
-    @property
-    def arg(self):
-        return self.value()
-
-    @arg.setter
-    def arg(self, value):
-        if isinstance(value, float):
-            self.setValue(value)
-        else:
-            sys.stderr.write("{self}.arg must be float".format(self=self))
-
-    def __repr__(self):
-        if self.maximum() == 2147483647 and self.minimum() == -2147483648:
-            return "{self.__class__.__name__}()".format(self=self)
-        return "{self.__class__.__name__}({min},{max})".format(self=self, min=self.minimum(), max=self.maximum())
-
-    def paintEvent(self, event):
-        QtGui.QDoubleSpinBox.paintEvent(self, event)
-        width = QtGui.QFontMetrics(self.font()).width(str(self.value()) + "0000")
-        width = max(QtGui.QFontMetrics(self.font()).width("0000000"), width)
-        self.setFixedWidth(width)
+        self.get_arg = self.value
+        self.set_arg = self.setValue
 
 
-class FloatArray(QtGui.QWidget):
-    argChanged = QtCore.Signal(list)
+class String(QtGui.QLineEdit, ArgWidget):
+    type = basestring
 
-    def __init__(self, labels, min_value=-2147483648, max_value=2147483647):
-        u"""
-        :param labels: 每整数输入框标签<tuple(str,str……)>
-        :param min_value: 最小值
-        :param max_value: 最大值
-        """
-        QtGui.QWidget.__init__(self)
-        self.labels = labels
-        self.setLayout(QtGui.QHBoxLayout())
-        self.layout().setContentsMargins(0, 0, 0, 0)
-
-        def emit_args():
-            self.argChanged.emit(self.arg)
-
-        for index, label in enumerate(labels):
-            self.layout().addWidget(QtGui.QLabel(label+": "))
-            self.layout().addWidget(Float(min_value, max_value))
-            self.layout().itemAt(index * 2 + 1).widget().valueChanged.connect(emit_args)
-
-    @property
-    def arg(self):
-        return [self.layout().itemAt(index * 2 + 1).widget().value() for index in range(self.layout().count()/2)]
-
-    @arg.setter
-    def arg(self, value):
-        if hasattr(value, "__iter__"):
-            value = [i for i in value if isinstance(i, float)]
-            if len(value) == self.layout().count() / 2:
-                for index in range(self.layout().count() / 2):
-                    self.layout().itemAt(index * 2 + 1).widget().arg = value[index]
-                return
-        warnings = "{self}.arg must be {length} float".format(self=self, length=self.layout().count()/2)
-        sys.stderr.write(warnings)
-
-    def __repr__(self):
-        min_value = self.layout().itemAt(1).widget().minimum()
-        max_value = self.layout().itemAt(1).widget().maximum()
-        if max_value == 2147483647 and min_value == -2147483648:
-            return "{self.__class__.__name__}({self.labels})".format(self=self)
-        return "{self.__class__.__name__}({self.labels},{min},{max})".format(self=self, min=min_value, max=max_value)
-
-
-class String(QtGui.QLineEdit):
     def __init__(self):
         QtGui.QLineEdit.__init__(self)
         self.argChanged = self.textChanged
-
-    @property
-    def arg(self):
-        return self.text()
-
-    @arg.setter
-    def arg(self, value):
-        if isinstance(value, (str, unicode)):
-            self.setText(value)
-        else:
-            sys.stderr.write("{self}.arg must be str".format(self=self))
-
-    def __repr__(self):
-        return "{self.__class__.__name__}()".format(self=self)
+        self.get_arg = self.text
+        self.set_arg = self.setText
 
 
-class Enum(QtGui.QComboBox):
-    def __init__(self, *texts):
+class Enum(QtGui.QComboBox, ArgWidget):
+    type = enum
+
+    @classmethod
+    def instance(cls, value):
+        if cls.is_arg(value):
+            return cls(*value.data.items_tuple)
+
+    def __init__(self, *items):
         QtGui.QComboBox.__init__(self)
-        self.texts = texts
-        for text in texts:
-            self.addItem(text)
-        self.argChanged = self.currentIndexChanged[str]
+        self.items = items
+        for item in items:
+            self.addItem(item)
+        self.argChanged = self.currentIndexChanged
+        self.get_arg = self.currentIndex
+        self.set_arg = self.setCurrentIndex
 
-    def paintEvent(self, event):
-        QtGui.QComboBox.paintEvent(self, event)
-        self.setFixedWidth(QtGui.QFontMetrics(self.font()).width(self.arg+"0000"))
-
-    @property
-    def arg(self):
-        return self.itemText(self.currentIndex())
-
-    @arg.setter
-    def arg(self, value):
-        if value in self.texts:
-            self.setCurrentIndex(self.findText(value))
+    @ArgWidget.arg.setter
+    def arg(self, arg):
+        if isinstance(arg, int):
+            if 0 <= arg <= len(self.items):
+                self.set_arg(arg)
+        elif arg in self.items:
+            self.set_arg(self.items.index(arg))
         else:
-            sys.stderr.write("{self}.arg must be in {self.texts}".format(self=self))
+            sys.stderr.write("{self}.arg must be a {self.type.__name__} in {self.items}".format(self=self))
 
     def __repr__(self):
-        return "{self.__class__.__name__}({texts})".format(self=self, texts=repr(self.texts)[1:-1])
+        return "{self.__module__}.{self.__class__.__name__}({items})".format(self=self, items=str(self.items)[1:-2])
 
 
-class Path(QtGui.QWidget):
-    def __init__(self, ext=""):
-        u"""
-        :param ext: 文件扩展名
-        空字符串:只打开文件夹
-        *：打开任意扩展名的文件
-        str: 打开指定扩展名的文件
-        list[str, str……]：打开列表内所有扩展名的文件
-        """
+class Path(QtGui.QWidget, ArgWidget):
+    type = basestring
+    pattern = re.compile(r'[A-Z]:([\\/][^\\/:*?"<>|]+)*$')
+
+    @classmethod
+    def is_arg(cls, value):
+        if String.is_arg(value):
+            return bool(cls.pattern.match(value))
+        return False
+
+    @classmethod
+    def instance(cls, value):
+        if cls.is_arg(value):
+            return cls(os.path.splitext(value)[-1])
+
+    def __init__(self, *ext):
         QtGui.QWidget.__init__(self)
         self.ext = ext
         self.setLayout(QtGui.QHBoxLayout())
@@ -309,47 +153,97 @@ class Path(QtGui.QWidget):
         self.file.fileSelected.connect(self.layout().itemAt(0).widget().setText)
         self.argChanged = self.layout().itemAt(0).widget().textChanged
         if ext:
-            if ext == "*":
-                file_filter = "All File(*)"
-            elif isinstance(ext, list):
-                file_filter = "file types(%s)" % " ".join(["*."+e for e in ext])
-            else:
-                file_filter = "file type(*.%s)" % ext
-            self.args = [ext]
-            self.file.setNameFilter(file_filter)
+            self.file.setNameFilter("file type(*.%s)" % self.ext)
         else:
             self.file.setFileMode(self.file.Directory)
+        self.get_arg = self.layout().itemAt(0).widget().text
+        self.set_arg = self.layout().itemAt(0).widget().setText
+
+    def __repr__(self):
+        return "{self.__module__}.{self.__class__.__name__}('{self.ext}')".format(self=self)
+
+
+class WidgetArray(QtGui.QWidget):
+    widget = ArgWidget
+    argChanged = QtCore.Signal(tuple)
+
+    @classmethod
+    def is_arg(cls, value):
+        if isinstance(value, (tuple, list)):
+            return all([cls.widget.is_arg(val) for val in value])
+        else:
+            return False
+
+    @classmethod
+    def instance(cls, value):
+        if cls.is_arg(value):
+            return cls(len(value))
+
+    def __init__(self, number):
+        QtGui.QWidget.__init__(self)
+        self.setLayout(QtGui.QHBoxLayout())
+        self.layout().setContentsMargins(0, 0, 0, 0)
+        self.widgets = [self.widget() for i in range(number)]
+        for widget in self.widgets:
+            self.layout().addWidget(widget)
+            self.argChanged.connect(self.emit_arg)
 
     @property
     def arg(self):
-        return self.layout().itemAt(0).widget().text().replace('\\', '/')
+        return tuple(self.layout().itemAt(index).widget().arg for index in range(self.layout().count()))
 
     @arg.setter
-    def arg(self, value):
-        if isinstance(value, (str, unicode)):
-            self.layout().itemAt(0).widget().setText(value)
+    def arg(self, arg):
+        count = self.layout().count()
+        if self.is_arg(arg) and len(arg) == count:
+            for index, value in enumerate(arg):
+                self.layout().itemAt(index).widget().arg = value
         else:
-            sys.stderr.write("{self}.arg must be str".format(self=self))
+            error = "{self}.arg must be {number} {self.widget.__name__}"
+            sys.stderr.write(error.format(self=self, number=self.layout().count()))
 
     def __repr__(self):
-        if not self.ext:
-            return "{self.__class__.__name__}()".format(self=self)
-        elif isinstance(self.ext, list):
-            return "{self.__class__.__name__}({self.ext})".format(self=self)
-        else:
-            return "{self.__class__.__name__}('{self.ext}')".format(self=self)
+        return "{self.__class__.__name__}({number})".format(self=self, number=self.layout().count())
+
+    def emit_arg(self):
+        self.argChanged.emit(self.arg)
+
+
+class BoolArray(WidgetArray):
+    widget = Bool
+
+
+class IntArray(WidgetArray):
+    widget = Int
+
+
+class FloatArray(WidgetArray):
+    widget = Float
 
 
 class PathArray(QtGui.QListWidget):
     argChanged = QtCore.Signal(list)
 
-    def __init__(self, pattern=""):
-        u"""
-        路径列表窗<list/str>
-        :param pattern: 正则表达式(文件命名规则)
-        """
+    @classmethod
+    def is_arg(cls, value):
+        if isinstance(value, (tuple, list)):
+            return all([Path.is_arg(val) for val in value])
+        else:
+            return False
+
+    @classmethod
+    def instance(cls, value):
+        if cls.is_arg(value):
+            extensions = []
+            for path in value:
+                ext = os.path.splitext(path)[-1]
+                if ext:
+                    extensions.append(ext)
+            return cls(*extensions)
+
+    def __init__(self, *extensions):
         QtGui.QListWidget.__init__(self)
-        self.pattern = re.compile(pattern)
+        self.extensions = extensions
         self.setAcceptDrops(True)
         self.paths = []
         self.menu = QtGui.QMenu(self)
@@ -357,37 +251,22 @@ class PathArray(QtGui.QListWidget):
         action.triggered.connect(self.clear)
 
     def contextMenuEvent(self, event):
-        u"""
-        右击事件，显示右键菜单
-        """
         self.menu.exec_(event.globalPos())
 
     def dragEnterEvent(self, event):
-        u"""
-        允许携带路径信息的QDrag触发拖拽事件；
-        """
         if event.mimeData().hasUrls():
             event.accept()
         else:
             event.ignore()
 
     def dragMoveEvent(self, event):
-        u"""
-        鼠标在组件上移动时,不再进行可触发拖拽事件的判断；
-        """
         pass
 
     def dropEvent(self, event):
-        u"""
-        拖拽事件，添加QDrag携带的路径到路径列表框；
-        """
         self.paths += [url.path().replace("\\", "/")[1:] for url in event.mimeData().urls()]
         self.arg = self.paths
 
     def clear(self):
-        """
-        清空路径列表；
-        """
         self.paths = []
         QtGui.QListWidget.clear(self)
         self.argChanged.emit(self.arg)
@@ -399,21 +278,29 @@ class PathArray(QtGui.QListWidget):
     @arg.setter
     def arg(self, value):
         self.clear()
-        if hasattr(value, "__iter__"):
+        if PathArray.is_arg(value):
             for path in value:
-                if isinstance(path, (str, unicode)):
-
-                    if path not in self.paths:
-                        self.paths.append(path)
-                        self.addItem(path)
-                        print path
-                        print "path"
+                is_file = self.extensions and (os.path.splitext(path)[-1] in self.extensions)
+                is_dir = not self.extensions and (not os.path.splitext(path)[-1])
+                if path not in self.paths and (is_file or is_dir):
+                    self.paths.append(path)
+                    self.addItem(path)
             self.argChanged.emit(self.arg)
         else:
-            sys.stderr.write("{self}.arg must be [str,str……]".format(self=self))
+            sys.stderr.write("{self}.arg must be [Path,Path……]".format(self=self))
 
     def __repr__(self):
-        if self.pattern.pattern:
-            return "{self.__class__.__name__}('{self.pattern.pattern}')".format(self=self)
-        else:
-            return "{self.__class__.__name__}()".format(self=self)
+        return "{self.__module__}.{self.__class__.__name__}({ext})".format(self=self, ext=str(self.extensions)[1:-2])
+
+__all__ = [
+    Bool,
+    Int,
+    Float,
+    Path,
+    Enum,
+    String,
+    BoolArray,
+    IntArray,
+    FloatArray,
+    PathArray
+]

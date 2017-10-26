@@ -14,20 +14,10 @@ import inspect
 
 
 class Log(object):
-    u"""
-    用来记录代码日志。
-    """
     def __init__(self, path):
-        u"""
-        :param path: 日志路径。
-        """
         self.path = path
 
     def __call__(self, *texts):
-        u"""
-        :param texts: 日志文本 <str>。
-        记录日志文本到日志路径。
-        """
         texts = [text + '\r\n' for text in texts]
         if not os.path.isfile(self.path):
             if not os.path.isdir(os.path.dirname(self.path)):
@@ -40,22 +30,14 @@ class Log(object):
 
     @property
     def time(self):
-        u"""
-        :return: 当前时间。
-        """
         return time.strftime('%Y/%m/%d %H:%M')
 
     @property
     def error(self):
-        u"""
-        :return: 当前错误信息。
-        """
+
         return traceback.format_exc().replace('\n', '\r\n')
 
     def open(self):
-        u"""
-        :return: 打开日志。
-        """
         if os.path.isfile(self.path):
             os.startfile(self.path)
 
@@ -64,13 +46,7 @@ class Log(object):
 
 
 class Json(object):
-    u"""
-    用来读/写json文件。
-    """
     def __init__(self, path):
-        u"""
-        :param path: json文件路径。
-        """
         self.path = path
         self.__data = None
 
@@ -78,19 +54,12 @@ class Json(object):
         return os.path.isfile(self.path)
 
     def read(self):
-        u"""
-        :return: json文件记录的数据
-        """
         if self.__data is None:
             return self.reload()
         else:
             return self.__data
 
     def write(self, data):
-        u"""
-        将python数据写入json文件；
-        :param data: python数据；
-        """
         if not os.path.isfile(self.path):
             json_dir = os.path.dirname(self.path)
             if not os.path.isdir(json_dir):
@@ -159,7 +128,7 @@ class Function(object):
         if args_pec.defaults:
             self.default = dict(zip(args_pec.args[-len(args_pec.defaults)-1:], args_pec.defaults))
             if not self.json:
-                self.json.write(self.default)
+                self.json.write({})
         else:
             self.default = {}
 

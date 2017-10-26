@@ -6,30 +6,36 @@
 </head>
 
 <style type="text/css">
-    @import"../module.css";
+    @import"module.css";
 </style>
 
 <body>
 
-<h1 id="title"><a href="../../../index.html">QFn</a>.args</h1>
+<h1 id="title"><a href="../index.html">QFn</a>.args</h1>
 
 <h2>模块简介：</h2>
 
 <pre>
-    每种组件对应一种参数类型。
-    组件均继承自QtGui.QWidget。
-    组件均可通过arg属性来查询/更改组件代表的参数的值。
-    组件都具有argChang信号，在组件数值改变时发射arg。
-    组件均可通过__repr__方法与eval函数来与字符串之间进行转换。
+    每种参数组件类对应一种默认参数的数据类型。
+    如果默认参数的数据类型没有相应组件，则无法生成界面。
+    Bool，BoolArray，Int，IntArray，Float，FloatArray， String均直接通过数据类型判断对应组件。
+    使用__init__下向__builtin__添加的内建类型enum作为参数默认值会对应Enum组件。
+    使用正则表达式[A-Z]:([\\/][^\\/:*?"<>|]+)*$匹配成功的字符串会对应Path组件。
 </pre>
 
-<h2>类：</h2>
+<h2>通用属性：</h2>
+<pre>
+    is_arg(value)：类方法，判断默认参数value是否为该组件队形类型。
+    instance(value): 类方法，根据参数实例化一个组件。
+    arg: 属性，设置/查询组件代表的参数值。
+    argChange: 信号，组件代表的参数值改变是，发射arg。
+</pre>
 
-
+<h2>参数类型对照：</h2>
 <table border="1" cellspacing="0" style="margin-left:48px;margin-bottom:48px;">
 <tr>
     <td>类名</td>
-    <td>参数类型</td>
+    <td>数据类型</td>
     <td>样式</td>
 </tr>
 
@@ -41,7 +47,7 @@
 
 <tr>
     <td><a href="BoolArray.html">BoolArray</a></td>
-    <td>list[bool, bool……]</td>
+    <td>tuple(bool, bool……)</td>
     <td><img src="icons/BoolArray.PNG"></td>
 </tr>
 
@@ -53,7 +59,7 @@
 
 <tr>
     <td><a href="IntArray.html">IntArray</a></td>
-    <td>list[int, int……]</td>
+    <td>tuple(int, int……）</td>
     <td><img src="icons/IntArray.PNG"></td>
 </tr>
 
@@ -65,7 +71,7 @@
 
 <tr>
     <td><a href="FloatArray.html">FloatArray</a></td>
-    <td>list[foat, float……]</td>
+    <td>tuple[float, float……]</td>
     <td><img src="icons/FloatArray.PNG"></td>
 </tr>
 
@@ -77,8 +83,9 @@
 
 <tr>
     <td><a href="Enum.html">Enum</a></td>
-    <td>str/unicode</td>
+    <td>enum/int/str/unicode</td>
     <td><img src="icons/Enum.PNG"></td>
+    <td></td>
 </tr>
 
 <tr>
@@ -89,7 +96,7 @@
 
 <tr>
     <td><a href="PathArray.html">PathArray</a></td>
-    <td>list[str, str……]</td>
+    <td>list[str/unicode, str/unicode……]</td>
     <td><img src="icons/PathArray.PNG"></td>
 </tr>
 </table>

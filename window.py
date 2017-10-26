@@ -1,248 +1,104 @@
 # coding:utf-8
-
+from PySide.QtUiTools import QUiLoader
 from PySide import QtGui, QtCore
 import os
 import args
-import yaml
 from function import Function
-
-with open(os.path.dirname(__file__)+"/data/qss/gray.qss") as _qss:
-    styleSheet = _qss.read()
 
 
 class AttributeDict(dict):
     def __getattr__(self, attr):
-        u"""
-        :param attr: 属性名。
-        :return: 将attr当作字典中的key查询到的值。
-        当通过AttributeDict.attr访问dict不存在的属性时调用。
-        """
         return self[attr]
 
 
-class Message(object):
-
-    def __init__(self, title):
-        u"""
-        :param title: 窗口标题，用来区别信息类型。
-        """
-        self._title = title
-
-    @property
-    def message(self):
-        """
-        仅在首次调用该属性时创建窗口实例，避免在导入模块时创建。
-        :return: <PySide.QtGui.QMessageBox>
-        """
-        if "_message" not in self.__dict__:
-            self.__dict__["_message"] = QtGui.QMessageBox()
-            self.message.setWindowTitle(self._title)
-            self.message.setStyleSheet(
-                """
-                background: #484848;color: 
-                rgb(200,200,200);
-                font-size: 18px;
-                border-color: #404040;
-                """)
-        return self.__dict__["_message"]
-
-    def __call__(self, text):
-        u"""
-        :param text: 提示内容。同一种信息类型公用一种提示窗口实例<str>。
-        将text内容在提示窗口中显示来对用户进行提示。
-        """
-        self.message.setText(text)
-        self.message.move(QtGui.QCursor.pos())
-        self.message.show()
-
-
-class Option(QtGui.QWidget):
-    u"""
-    函数组件。
-    Message message: 函数帮助显示装口。
-    Function fn: 组件对应函数。
-    html：函数帮助网页储存地址。
-    """
-    message = Message("function help")
-
-    def __init__(self, fn):
-        u"""
-        :param fn: python函数<function>。
-        """
-        QtGui.QWidget.__init__(self)
-        self.fn = Function(fn)
-        self.setStyleSheet(styleSheet)
+class FunctionWidget(QtGui.QFrame):
+    def __init__(self, fun):
+        QtGui.QFrame.__init__(self)
+        self.function = Function(fun)
         self.setLayout(QtGui.QFormLayout())
         self.layout().setLabelAlignment(QtCore.Qt.AlignRight)
-        self.layout().setFieldGrowthPolicy(QtGui.QFormLayout.ExpandingFieldsGrow)
         self.menu = QtGui.QMenu(self)
         self.menu.addAction("reset").triggered.connect(self.reset)
         self.menu.addAction("help").triggered.connect(self.help)
-        self.widgets = AttributeDict()
-        self.html = None
-
-    def __call__(self, **kwargs):
-        u"""
-        :param kwargs: {由参数名和参数组件键值对{str arg: QWidget widget……}
-        参数名将下划线转空格、首字母大小、后缀加：。
-        例：point_on_curve>Point On Curve:
-        以 参数名:参数组件 的形式竖向添加到选项组件。
-        添加顺序为原函数参数顺数。
-        可适当改变原函数参数名和参数顺序来让界面好看一些。
-        """
-        keys = [arg for arg in self.fn.args if arg in kwargs]
-        keys.extend(set(key for key in kwargs if key in self.fn) - set(keys))
-        for key in keys:
-            label = " ".join([word.capitalize() for word in key.split("_")]) + " : "
-            self.layout().addRow(label, kwargs[key])
-            self.widgets[key] = kwargs[key]
-        self.kwargs = self.fn.kwargs
+        self.argWidgets = AttributeDict()
+        for key in self.function.args:
+            if key in self.function.default:
+                value = self.function.default[key]
+                for ArgWidget in args.__all__:
+                    label = " ".join([word.capitalize() for word in key.split("_")]) + " : "
+                    arg_widget = ArgWidget.instance(value)
+                    if arg_widget is not None:
+                        self.layout().addRow(label, arg_widget)
+                        self.argWidgets[key] = arg_widget
+                        break
+        self.kwargs = self.function.default
 
     def __repr__(self):
         return "{self.__module__}.{self.__class__.__name__}('{self.fn.fullName}')".format(self=self)
 
     @property
     def kwargs(self):
-        u"""
-        由函数组件的参数名和参数组件表示的参数值构成的键值对。
-        """
-        return {key: value.arg for key, value in self.widgets.items()}
+        return {key: value.arg for key, value in self.argWidgets.items()}
 
     @kwargs.setter
     def kwargs(self, kwargs):
         for key, value in kwargs.items():
-            if key in self.widgets:
-                self.widgets[key].arg = value
-
-    def dump(self):
-        u"""
-        将所有组建转化为可写入yaml的通用数据。
-        :return: 由参数名和可通过eval生成参数组件的字符串构成的键值对{str arg: str widget……}
-        """
-        return {key: repr(value) for key, value in self.widgets.items()}
-
-    def load(self, data):
-        u"""
-        :param data: 由参数名和可通过eval生成参数组件的字符串构成的键值对{str arg: str widget……}
-        将通用数据转化为参数组件。
-        """
-        self(**{key: eval(value, args.__dict__) for key, value in data.items()})
+            if key in self.argWidgets:
+                self.argWidgets[key].arg = value
 
     def reset(self):
-        u"""
-        :return: 将参数组建的表示的值设置成函数默认值。
-        """
-        self.kwargs = self.fn.default
+        self.kwargs = self.function.default
 
     def help(self):
-        u"""
-        若设置了相关网页帮助，则打开网页。否则，显示函数帮助。
-        """
-        if self.html:
-            os.startfile(self.html)
-        else:
-            self.message(self.fn.help)
+        QtGui.QMessageBox.about(self, "hlep", self.function.help)
 
     def contextMenuEvent(self, event):
-        u"""
-        右击时，显示右键菜单。
-        """
         self.menu.exec_(event.globalPos())
 
 
-class Window(QtGui.QDialog):
-    """
-    功能函数窗口。
-    与maya通用菜单类似的窗口布局。
-    QtCore.Signal applySignal: 执行apply函数时按钮时发射。
-    QtCore.Signal closeSignal: 执行close函数时按钮时发射。
-    QtCore.Signal showSignal: 执行showNormal函数时时发射。
-    AttributeDict options: 由函数名称和函数组件构成的键值对。
-    """
-    applySignal = QtCore.Signal()
-    closeSignal = QtCore.Signal()
-    showSignal = QtCore.Signal()
+class Window(object):
+    loader = QUiLoader()
+    ui_file = os.path.dirname(__file__)+"/window.ui"
+    icons_dir = os.path.dirname(__file__)+"/icons/"
 
-    def __init__(self, path=None):
-        u"""
-        :param path: 对应yaml文件路径。若yaml存在，则直接读取yaml创建options.
-        创建与maya工具窗口相似的窗口。
-        点击apply and close按钮依次执行apply,close方法。
-        点击apply按钮执行apply方法。
-        点击close按钮执行close方法。
-        """
-        QtGui.QDialog.__init__(self)
-        self.setParent(QtGui.QApplication.activeWindow())
-        self.setWindowFlags(QtCore.Qt.WindowFlags(1))
-        self.resize(546, 350)
-        self.setStyleSheet(styleSheet)
-        self.setLayout(QtGui.QVBoxLayout())
-        self.layout().setContentsMargins(5, 5, 5, 5)
-        self.layout().setSpacing(5)
-        self.layout().addWidget(QtGui.QTabWidget())
-        self.layout().addLayout(QtGui.QHBoxLayout(self))
-        self.layout().itemAt(1).layout().setSpacing(5)
-        self.layout().itemAt(1).layout().addWidget(QtGui.QPushButton(u"apply and close"))
-        self.layout().itemAt(1).layout().addWidget(QtGui.QPushButton(u"apply"))
-        self.layout().itemAt(1).layout().addWidget(QtGui.QPushButton(u"close"))
-        self.layout().itemAt(1).layout().itemAt(0).widget().clicked.connect(self.apply)
-        self.layout().itemAt(1).layout().itemAt(0).widget().clicked.connect(self.close)
-        self.layout().itemAt(1).layout().itemAt(1).widget().clicked.connect(self.apply)
-        self.layout().itemAt(1).layout().itemAt(2).widget().clicked.connect(self.close)
-        self.options = AttributeDict()
-        self.path = path
-        self.html = None
-        if path:
-            html = os.path.splitext(path)[0] + ".html"
-            if os.path.isfile(html):
-                self.html = html
-            with open(path, "r") as ui:
-                for fn, tab_data in yaml.load(ui.read()).items():
-                    self.add(fn).load(tab_data)
+    def __init__(self, *functions, **kwargs):
+        self.functions = functions
+        self.name = kwargs.setdefault("name", "window")
+        self.icon = kwargs.setdefault("name", "")
+        self.typ = kwargs.setdefault("typ", "widget")
+        self.window = None
 
-    def __repr__(self):
-        return "{self.__module__}.{self.__class__.__name__}('{self.path}')".format(self=self)
-
-    def showNormal(self):
-        u"""
-        显示窗口
-        """
-        QtGui.QWidget.showNormal(self)
-        self.showSignal.emit()
-
-    def close(self):
-        u"""
-        关闭窗口。
-        """
-        QtGui.QWidget.close(self)
-        self.closeSignal.emit()
+    def show(self):
+        if self.window:
+            self.window.showNormal()
+        else:
+            self.window = self.loader.load(self.ui_file)
+            self.window.setObjectName(self.name)
+            self.window.setWindowIcon(QtGui.QIcon(self.icons_dir+self.icon))
+            self.window.apply.clicked.connect(self.apply)
+            self.window.setParent(QtGui.QApplication.activeWindow())
+            self.window.setWindowFlags(QtCore.Qt.WindowFlags(1))
+            self.window.showNormal()
+            if self.typ == "widgets":
+                self.window.functionTab = QtGui.QTabWidget()
+                self.window.vlayout.insertWidget(0, self.window.functionTab)
+                self.window.functionWidgets = AttributeDict()
+                for fun in self.functions:
+                    function_widget = FunctionWidget(fun)
+                    label = " ".join([word.capitalize() for word in function_widget.function.name.split("_")])
+                    self.window.functionWidgets[function_widget.function.name] = function_widget
+                    self.window.functionTab.addTab(function_widget, label)
+            elif self.typ == "widget":
+                self.window.functionWidget = FunctionWidget(self.functions[0])
+                self.window.vlayout.insertWidget(0, self.window.functionWidget)
+                self.window.functionWidget.setFrameStyle(
+                    self.window.functionWidget.Box | self.window.functionWidget.Raised)
 
     def apply(self):
-        u"""
-        运行当前选择的函数组件。
-        """
-        option = self.layout().itemAt(0).widget().currentWidget()
-        option.fn(**option.kwargs)
-        self.applySignal.emit()
-
-    def add(self, fn):
-        u"""
-        :param fn: python函数。
-        添加相应的函数组件。
-        """
-        option = Option(fn)
-        option.html = self.html
-        self.options[option.fn.name] = option
-        self.layout().itemAt(0).widget().addTab(option, option.fn.name)
-        return option
-
-    def save(self, path=None):
-        """
-        :param path: yaml文件路径<str>
-        将当前窗口储存为yaml文件。
-        """
-        if path is not None:
-            self.path = path
-        with open(path, "w") as ui:
-            data = {option.fn.fullName: option.dump() for option in self.options.values()}
-            ui.write(yaml.dump(data, default_flow_style=False))
+        if self.typ == "widgets":
+            function_widget = self.window.functionTab.currentWidget()
+            function_widget.function(**function_widget.kwargs)
+        elif self.typ == "widget":
+            self.window.functionWidget.function(**self.window.functionWidget.kwargs)
+        else:
+            self.functions[0]()
