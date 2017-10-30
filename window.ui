@@ -2,9 +2,6 @@
 <ui version="4.0">
  <class>window</class>
  <widget class="QDialog" name="window">
-  <property name="windowModality">
-   <enum>Qt::WindowModal</enum>
-  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -26,7 +23,7 @@
    <string notr="true">QWidget{
     background: #484848;
     color: rgb(200,200,200);
-    font-size: 18px;
+    font-size: 14px;
     border-color: #404040;
     selection-background-color: LightSlateGray;
 }

@@ -25,6 +25,58 @@ import os
 import sys
 
 
+class AttributeDict(dict):
+    def __getattr__(self, attr):
+        return self[attr]
+
+
+class enum(object):
+
+    def __init__(self, *items):
+        self.data = AttributeDict()
+        self.data.index = 0
+        self.data.item = items[0]
+        self.data.items_tuple = items
+
+    def __int__(self):
+        return self.data.index
+
+    def __float__(self):
+        return float(self.data.index)
+
+    def __str__(self):
+        return self.data.item
+
+    def __getitem__(self, item):
+        if isinstance(item, int):
+            result = enum(*self.data.items_tuple)
+            result.data.index = item
+            result.data.item = self.data.items_tuple[item]
+            return enum
+        else:
+            return getattr(self, item)
+
+    def __getattr__(self, item):
+        result = enum(*self.data.items_tuple)
+        result.data.item = item
+        result.data.index = self.data.items_tuple.index(item)
+        return result
+
+    def __cmp__(self, other):
+        if isinstance(other, (float, int)) :
+            return cmp(int(self), other)
+        elif isinstance(other, (str, unicode)):
+            return cmp(str(self), other)
+        elif isinstance(other, Enum):
+            return cmp(str(self), other)
+        elif hasattr(other, "__int__") or hasattr(other, "__float__"):
+            return cmp(int(self), int(other))
+        return cmp(str(self), other)
+
+    def __repr__(self):
+        return 'enum({items})'.format(items=str(self.data.items_tuple)[1:-2])
+
+
 class ArgWidget(object):
     type = None
 
@@ -72,6 +124,12 @@ class Int(QtGui.QSpinBox, ArgWidget):
         self.get_arg = self.value
         self.set_arg = self.setValue
 
+    def paintEvent(self, event):
+        QtGui.QSpinBox.paintEvent(self, event)
+        width = QtGui.QFontMetrics(self.font()).width(str(self.arg) + "0001")
+        width = max(QtGui.QFontMetrics(self.font()).width("000000"), width)
+        self.setFixedWidth(width)
+
 
 class Float(QtGui.QDoubleSpinBox, ArgWidget):
     type = float
@@ -83,6 +141,12 @@ class Float(QtGui.QDoubleSpinBox, ArgWidget):
         self.argChanged = self.valueChanged
         self.get_arg = self.value
         self.set_arg = self.setValue
+
+    def paintEvent(self, event):
+        QtGui.QDoubleSpinBox.paintEvent(self, event)
+        width = QtGui.QFontMetrics(self.font()).width(str(self.arg) + "0001")
+        width = max(QtGui.QFontMetrics(self.font()).width("000000"), width)
+        self.setFixedWidth(width)
 
 
 class String(QtGui.QLineEdit, ArgWidget):
@@ -108,22 +172,30 @@ class Enum(QtGui.QComboBox, ArgWidget):
         self.items = items
         for item in items:
             self.addItem(item)
-        self.argChanged = self.currentIndexChanged
-        self.get_arg = self.currentIndex
-        self.set_arg = self.setCurrentIndex
+        self.argChanged = self.currentIndexChanged[str]
 
-    @ArgWidget.arg.setter
+    @property
+    def arg(self):
+        return self.items[self.currentIndex()]
+
+    @arg.setter
     def arg(self, arg):
         if isinstance(arg, int):
             if 0 <= arg <= len(self.items):
-                self.set_arg(arg)
+                self.setCurrentIndex(arg)
         elif arg in self.items:
-            self.set_arg(self.items.index(arg))
+            self.setCurrentIndex(self.items.index(arg))
         else:
             sys.stderr.write("{self}.arg must be a {self.type.__name__} in {self.items}".format(self=self))
 
     def __repr__(self):
         return "{self.__module__}.{self.__class__.__name__}({items})".format(self=self, items=str(self.items)[1:-2])
+
+    def paintEvent(self, event):
+        QtGui.QComboBox.paintEvent(self, event)
+        width = QtGui.QFontMetrics(self.font()).width(str(self.arg) + "0001")
+        width = max(QtGui.QFontMetrics(self.font()).width("000000"), width)
+        self.setFixedWidth(width)
 
 
 class Path(QtGui.QWidget, ArgWidget):
@@ -153,7 +225,7 @@ class Path(QtGui.QWidget, ArgWidget):
         self.file.fileSelected.connect(self.layout().itemAt(0).widget().setText)
         self.argChanged = self.layout().itemAt(0).widget().textChanged
         if ext:
-            self.file.setNameFilter("file type(*.%s)" % self.ext)
+            self.file.setNameFilter("file type(*%s)" % self.ext)
         else:
             self.file.setFileMode(self.file.Directory)
         self.get_arg = self.layout().itemAt(0).widget().text
