@@ -52,7 +52,7 @@ class enum(object):
             result = enum(*self.data.items_tuple)
             result.data.index = item
             result.data.item = self.data.items_tuple[item]
-            return enum
+            return result
         else:
             return getattr(self, item)
 

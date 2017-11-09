@@ -19,16 +19,9 @@
     每种参数组件类对应一种默认参数的数据类型。
     如果默认参数的数据类型没有相应组件，则无法生成界面。
     Bool，BoolArray，Int，IntArray，Float，FloatArray， String均直接通过数据类型判断对应组件。
-    使用__init__下向__builtin__添加的内建类型enum作为参数默认值会对应Enum组件。
+    导入QFn时会向__builtin__添加的内建类型enum，以enum作为参数默认值会对应Enum组件。
     使用正则表达式[A-Z]:([\\/][^\\/:*?"<>|]+)*$匹配成功的字符串会对应Path组件。
-</pre>
-
-<h2>通用属性：</h2>
-<pre>
-    is_arg(value)：类方法，判断默认参数value是否为该组件队形类型。
-    instance(value): 类方法，根据参数实例化一个组件。
-    arg: 属性，设置/查询组件代表的参数值。
-    argChange: 信号，组件代表的参数值改变是，发射arg。
+    PathArray的使用方式是将需要的文件拖入组件内。
 </pre>
 
 <h2>参数类型对照：</h2>
@@ -71,7 +64,7 @@
 
 <tr>
     <td><a href="FloatArray.html">FloatArray</a></td>
-    <td>tuple[float, float……]</td>
+    <td>tuple（float, float……）</td>
     <td><img src="icons/FloatArray.PNG"></td>
 </tr>
 

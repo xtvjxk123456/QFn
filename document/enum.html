@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>window</title>
+</head>
+
+<style type="text/css">
+    @import"module.css";
+</style>
+<body>
+
+<h2>说明</h2>
+<hr>
+<pre>
+    只要加载了QFn, enum就会添加到内建模块内。
+    enum可以与字符串和整数进行对比转化。
+    enum可以通过__getitem__与__getattr__访问各枚举项。
+</pre>
+
+</body>
+
+
+<h2>案例</h2>
+<hr>
+<pre style="margin-left:36px;">
+import QFn
+SEX = enum("man", "woman")
+print repr(SEX)
+#result enum('man', 'woman)
+print SEX.man
+#result man
+print SEX.woman
+#result woman
+print SEX[0]
+#result man
+print SEX[1]
+#result woman
+print int(SEX.woman)
+#result 1
+print str(SEX[0])
+#result man
+print SEX.man == 0
+#result True
+print SEX[1] == "woman"
+#result True
+</pre>
+
+</body>
+</html>

@@ -42,7 +42,7 @@ class Function(object):
 
     @property
     def kwargs(self):
-        json_file = "%s/default/%s/%s.json" % (os.path.dirname(__file__), socket.gethostname(), self.fullName)
+        json_file = "{documents}/CG/kwargs/{name}.json".format(documents=os.path.expanduser("~"), name=self.fullName)
         if os.path.isfile(json_file):
             with open(json_file) as read:
                 return json.loads(read.read())
@@ -50,14 +50,11 @@ class Function(object):
 
     @kwargs.setter
     def kwargs(self, kwargs):
-        json_dir = "%s/default/%s/" % (os.path.dirname(__file__), socket.gethostname())
+        json_dir = "{documents}/CG/kwargs/".format(documents=os.path.expanduser("~"))
         if not os.path.isdir(json_dir):
             os.makedirs(json_dir)
         with open(json_dir+self.fullName+".json", "w") as write:
             write.write(json.dumps(kwargs))
-
-    def redo(self):
-        self(**self.kwargs)
 
     def reload(self):
         reload(sys.modules[self.module])
@@ -168,7 +165,7 @@ class Window(object):
 
     def apply(self):
         if self.type == "function":
-            self.functions[0]()
+            Function(self.functions[0])()
         elif self.type == "widget":
             self.window.functionWidget.apply()
         elif self.type == "widgets":
