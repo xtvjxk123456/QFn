@@ -213,7 +213,7 @@ class Path(QtGui.QWidget, ArgWidget):
         if cls.is_arg(value):
             return cls(os.path.splitext(value)[-1])
 
-    def __init__(self, *ext):
+    def __init__(self, ext):
         QtGui.QWidget.__init__(self)
         self.ext = ext
         self.setLayout(QtGui.QHBoxLayout())
